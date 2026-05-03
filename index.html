@@ -6,14 +6,6 @@
 <title>FlushR — Trouvez les meilleures toilettes</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<script>
-  // ============================================================
-  // 🔧 COLLE TES CLÉS SUPABASE ICI
-  // ============================================================
-  const SUPABASE_URL  = 'COLLE_TON_PROJECT_URL_ICI';
-  const SUPABASE_ANON_KEY = 'COLLE_TA_ANON_KEY_ICI';
-</script>
-
 <style>
 :root {
   --bg:#F7F4EF; --surface:#fff; --surface2:#F0EDE8;
@@ -34,325 +26,101 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif}
 .spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* SETUP BANNER */
-#setup-banner{background:#1e293b;color:#f8fafc;padding:16px 24px;font-size:13px;line-height:1.6;font-family:'DM Sans',sans-serif}
-#setup-banner strong{color:#52B788}
-#setup-banner code{background:#334155;padding:2px 6px;border-radius:4px;font-size:12px}
-
 /* NAV */
 nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:50}
 .logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.5px}
 .logo span{color:var(--text3);font-weight:400;font-size:13px;margin-left:6px;vertical-align:middle}
-.nav-right{display:flex;align-items:center;gap:10px}
-.nav-user{font-size:13px;color:var(--text2)}
-.nav-user strong{color:var(--text);font-weight:500}
-.badge-admin{background:var(--warn);color:white;font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;margin-left:6px;font-family:'Syne',sans-serif}
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif}
-.btn-primary{background:var(--accent);color:white}.btn-primary:hover{background:#235C42}
-.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}.btn-outline:hover{background:var(--surface2)}
-.btn-danger{background:var(--danger-light);color:var(--danger);border:1px solid rgba(193,18,31,.2)}.btn-danger:hover{background:#FAD4D6}
-.btn-sm{padding:6px 12px;font-size:12px}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-
-/* LAYOUT */
-.page{max-width:900px;margin:0 auto;padding:32px 24px}
-
-/* AUTH */
+/* AUTH & PAGES */
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
 .auth-card{background:var(--surface);border-radius:20px;border:1px solid var(--border);padding:40px;max-width:420px;width:100%}
-.auth-logo{text-align:center;margin-bottom:8px;font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--accent)}
-.auth-sub{text-align:center;font-size:14px;color:var(--text3);margin-bottom:32px}
 .form-group{margin-bottom:16px}
-.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px}
-.form-input{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);transition:border .15s;outline:none}
-.form-input:focus{border-color:var(--accent);background:white}
-.form-input::placeholder{color:var(--text3)}
-.form-hint{font-size:12px;color:var(--text3);margin-top:5px}
-.auth-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--text3)}
-.auth-switch a{color:var(--accent);cursor:pointer;font-weight:500}
-.error-msg{background:var(--danger-light);color:var(--danger);font-size:13px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;border:1px solid rgba(193,18,31,.15)}
-.success-msg{background:var(--accent-light);color:var(--accent);font-size:13px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;border:1px solid rgba(45,106,79,.2)}
+.form-label{display:block;font-size:12px;font-weight:500;margin-bottom:6px}
+.form-input{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg);font-size:14px;outline:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:white}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}
 
-/* FEED & CARDS */
-.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap}
-.feed-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800}
-.feed-title span{color:var(--accent)}
-.filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
-.filter-pill{padding:7px 14px;border-radius:99px;border:1px solid var(--border2);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text2);transition:all .15s}
-.filter-pill:hover{border-color:var(--accent2);color:var(--accent)}
-.filter-pill.active{background:var(--accent);color:white;border-color:var(--accent)}
-.search-row{display:flex;gap:10px;margin-bottom:16px}
-.search-row .form-input{max-width:340px}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.toilet-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:border .15s,transform .15s;cursor:pointer}
-.toilet-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.card-img{height:160px;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* FEED */
+.page{max-width:900px;margin:0 auto;padding:32px 24px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
+.toilet-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:15px;cursor:pointer}
+.card-img{height:140px;background:var(--surface2);display:flex;align-items:center;justify-content:center;border-radius:8px;margin-bottom:10px;overflow:hidden}
 .card-img img{width:100%;height:100%;object-fit:cover}
-.card-img-placeholder{font-size:48px;opacity:.3}
-.card-body{padding:16px}
-.card-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
-.card-address{font-size:12px;color:var(--text3);margin-bottom:10px}
-.card-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
-.badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px}
-.badge-pub{background:#E6F1FB;color:#185FA5}
-.badge-priv{background:var(--warn-light);color:#9A3B1F}
-.badge-pay{background:var(--danger-light);color:var(--danger)}
-.badge-free{background:var(--accent-light);color:var(--accent)}
-.badge-pmr{background:#EEEDFE;color:#3C3489}
-.stars-row{display:flex;gap:2px;align-items:center}
-.star{font-size:13px}.star.full{color:#EF9F27}.star.empty{color:#D3D1C7}
 
-/* MODAL & OTHERS */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;overflow-y:auto;padding:40px 20px}
-.modal-bg.open{display:flex;align-items:flex-start;justify-content:center}
-.modal{background:var(--surface);border-radius:20px;width:100%;max-width:560px;padding:32px;position:relative}
-.modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:none;border-radius:99px;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
-.star-picker{display:flex;gap:8px;margin-top:4px}
-.star-pick{font-size:26px;cursor:pointer;color:#D3D1C7;transition:color .1s}
-.star-pick.lit{color:#EF9F27}
-.photo-upload-area{border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer}
-.photo-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.photo-preview{width:72px;height:72px;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border)}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:white;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;z-index:9999;transition:transform .3s;pointer-events:none}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-@media(max-width:600px){ .page{padding:20px 16px} .cards-grid{grid-template-columns:1fr} }
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:20px;width:90%;max-width:500px;padding:30px;position:relative}
+.star-pick{font-size:24px;cursor:pointer;color:#D3D1C7}.star-pick.lit{color:#EF9F27}
 </style>
 </head>
 <body>
 
-<div id="loading-screen"><div class="spinner"></div><div style="font-size:13px;color:var(--text3)">Chargement…</div></div>
-<div id="setup-banner" class="hidden">⚠️ <strong>Configuration requise :</strong> Remplace les clés Supabase dans le code.</div>
-<div class="toast" id="toast"></div>
+<div id="loading-screen"><div class="spinner"></div><p>Initialisation FlushR...</p></div>
 
 <nav id="main-nav" class="hidden">
-  <div class="logo">FlushR <span>trouve tes toilettes</span></div>
+  <div class="logo">FlushR <span>by Lucien</span></div>
   <div class="nav-right">
-    <span class="nav-user" id="nav-user-info"></span>
-    <button class="btn btn-outline btn-sm hidden" id="mod-btn" onclick="showPage('moderation')">Modération</button>
-    <button class="btn btn-outline btn-sm" onclick="doLogout()">Déconnexion</button>
+    <button class="btn btn-outline" onclick="window.doLogout()">Déconnexion</button>
   </div>
 </nav>
 
-<!-- PAGES -->
+<!-- LOGIN -->
 <div id="page-login" class="auth-wrap hidden">
   <div class="auth-card">
-    <div class="auth-logo">🚽 FlushR</div>
-    <div id="login-error" class="error-msg hidden"></div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" id="login-email" type="email">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Mot de passe</label>
-      <input class="form-input" id="login-pwd" type="password">
-    </div>
-    <button class="btn btn-primary" style="width:100%" id="login-btn" onclick="doLogin()">Se connecter</button>
-    <div class="auth-switch">Pas encore de compte ? <a onclick="showPage('register')">S'inscrire</a></div>
+    <h2 style="text-align:center;margin-bottom:20px">Connexion</h2>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email"></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="login-pwd" type="password"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="window.doLogin()">Se connecter</button>
+    <p style="margin-top:15px;text-align:center;font-size:13px">Pas de compte ? <a href="#" onclick="showPage('register')">S'inscrire</a></p>
   </div>
 </div>
 
+<!-- REGISTER -->
 <div id="page-register" class="auth-wrap hidden">
   <div class="auth-card">
-    <div class="auth-logo">🚽 FlushR</div>
-    <div id="reg-error" class="error-msg hidden"></div>
+    <h2 style="text-align:center;margin-bottom:20px">Inscription</h2>
     <div class="form-group"><label class="form-label">Pseudo</label><input class="form-input" id="reg-name" type="text"></div>
     <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email"></div>
     <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="reg-pwd" type="password"></div>
-    <button class="btn btn-primary" style="width:100%" id="reg-btn" onclick="doRegister()">Créer mon compte</button>
-    <div class="auth-switch">Déjà un compte ? <a onclick="showPage('login')">Se connecter</a></div>
+    <button class="btn btn-primary" style="width:100%" onclick="window.doRegister()">Créer le compte</button>
+    <p style="margin-top:15px;text-align:center;font-size:13px"><a href="#" onclick="showPage('login')">Retour connexion</a></p>
   </div>
 </div>
 
+<!-- FEED -->
 <div id="page-feed" class="hidden">
   <div class="page">
-    <div class="feed-header">
-      <div class="feed-title">Toilettes <span>près de chez vous</span></div>
-      <button class="btn btn-primary" onclick="openAddModal()">+ Ajouter</button>
-    </div>
-    <div class="search-row"><input class="form-input" id="search-input" type="text" placeholder="Rechercher..." oninput="renderFeed()"></div>
-    <div class="filters">
-      <div class="filter-pill active" onclick="setFilter('all',this)">Tous</div>
-      <div class="filter-pill" onclick="setFilter('public',this)">Public</div>
-      <div class="filter-pill" onclick="setFilter('prive',this)">Privé</div>
-      <div class="filter-pill" onclick="setFilter('gratuit',this)">Gratuit</div>
-      <div class="filter-pill" onclick="setFilter('pmr',this)">PMR ♿</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+        <h1>Toilettes</h1>
+        <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('open')">+ Ajouter</button>
     </div>
     <div class="cards-grid" id="cards-grid"></div>
-    <div id="empty-state" class="hidden" style="text-align:center;padding:40px;color:var(--text3)">Aucun résultat trouvé.</div>
   </div>
 </div>
 
 <!-- MODAL ADD -->
 <div class="modal-bg" id="modal-add">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal('modal-add')">✕</button>
-    <h3 style="margin-bottom:20px">Ajouter des toilettes</h3>
-    <div class="form-group"><label class="form-label">Nom du lieu *</label><input class="form-input" id="add-name" type="text"></div>
-    <div class="form-group"><label class="form-label">Adresse *</label><input class="form-input" id="add-address" type="text"></div>
+    <h3>Ajouter un lieu</h3>
+    <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="add-name" type="text"></div>
+    <div class="form-group"><label class="form-label">Adresse</label><input class="form-input" id="add-address" type="text"></div>
     <div class="form-group">
-      <label class="form-label">Type & Prix</label>
-      <div style="display:flex;gap:10px">
-        <select class="form-input" id="add-type"><option value="public">Public</option><option value="prive">Privé</option></select>
-        <select class="form-input" id="add-price"><option value="gratuit">Gratuit</option><option value="payant">Payant</option></select>
-      </div>
-    </div>
-    <div class="form-group">
-        <label class="form-label">Note de propreté</label>
-        <div class="star-picker" id="add-stars-picker">
-            <span class="star-pick" onclick="setStar(1)">★</span><span class="star-pick" onclick="setStar(2)">★</span><span class="star-pick" onclick="setStar(3)">★</span><span class="star-pick" onclick="setStar(4)">★</span><span class="star-pick" onclick="setStar(5)">★</span>
+        <label class="form-label">Note</label>
+        <div id="star-container">
+            <span class="star-pick" onclick="window.setStar(1)">★</span><span class="star-pick" onclick="window.setStar(2)">★</span><span class="star-pick" onclick="window.setStar(3)">★</span><span class="star-pick" onclick="window.setStar(4)">★</span><span class="star-pick" onclick="window.setStar(5)">★</span>
         </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Photos (max 3)</label>
-      <div class="photo-upload-area" onclick="document.getElementById('add-photos-input').click()">📷 Cliquez pour ajouter</div>
-      <input type="file" id="add-photos-input" multiple accept="image/*" style="display:none" onchange="previewPhotos(this)">
-      <div class="photo-previews" id="photo-previews"></div>
-    </div>
-    <div id="add-error" class="error-msg hidden"></div>
-    <button class="btn btn-primary" style="width:100%" id="add-submit-btn" onclick="submitToilet()">Soumettre</button>
+    <button class="btn btn-primary" style="width:100%" onclick="window.submitToilet()">Publier</button>
+    <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="document.getElementById('modal-add').classList.remove('open')">Fermer</button>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-// INITIALISATION & LOGIQUE APP
-let supabase;
-let currentUser = null;
-let currentProfile = null;
-let currentFilter = 'all';
-let addStars = 0;
-let photoDataURLs = [];
-
-async function boot() {
-  if (SUPABASE_URL === 'COLLE_TON_PROJECT_URL_ICI') {
-    document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('setup-banner').classList.remove('hidden');
-    return;
-  }
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    await loadProfile();
-    showPage('feed');
-  } else {
-    showPage('login');
-  }
-  document.getElementById('loading-screen').style.display = 'none';
-}
-
-async function loadProfile() {
-  const { data } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-  currentProfile = data;
-}
-
-function showPage(name) {
-  ['login','register','feed'].forEach(p => document.getElementById('page-'+p).classList.add('hidden'));
-  document.getElementById('page-'+name).classList.remove('hidden');
-  document.getElementById('main-nav').classList.toggle('hidden', name !== 'feed');
-  if(name === 'feed') renderFeed();
-}
-
-// AUTH
-async function doLogin() {
-  const email = document.getElementById('login-email').value;
-  const pwd = document.getElementById('login-pwd').value;
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pwd });
-  if (error) alert("Erreur d'identification"); else location.reload();
-}
-
-async function doRegister() {
-    const name = document.getElementById('reg-name').value;
-    const email = document.getElementById('reg-email').value;
-    const pwd = document.getElementById('reg-pwd').value;
-    const { error } = await supabase.auth.signUp({ email, password: pwd, options: { data: { name } } });
-    if (error) alert(error.message); else alert("Vérifiez vos emails !");
-}
-
-function doLogout() { supabase.auth.signOut(); location.reload(); }
-
-// FEED & FILTERS
-function setFilter(f, el) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  renderFeed();
-}
-
-async function renderFeed() {
-  const grid = document.getElementById('cards-grid');
-  const search = document.getElementById('search-input').value.toLowerCase();
-  let query = supabase.from('toilets').select('*').eq('status','approved');
-  
-  const { data: toilets } = await query;
-  grid.innerHTML = '';
-
-  const filtered = (toilets || []).filter(t => {
-    const matchSearch = t.name.toLowerCase().includes(search) || t.address.toLowerCase().includes(search);
-    const matchType = currentFilter === 'all' || t.type === currentFilter || t.price === currentFilter || (currentFilter === 'pmr' && t.pmr === 'yes');
-    return matchSearch && matchType;
-  });
-
-  filtered.forEach(t => {
-    const card = document.createElement('div');
-    card.className = 'toilet-card';
-    card.innerHTML = `
-      <div class="card-img">${t.photos?.length ? `<img src="${t.photos[0]}">` : '🚽'}</div>
-      <div class="card-body">
-        <div class="card-name">${t.name}</div>
-        <div class="card-address">${t.address}</div>
-        <div class="stars-row">${'★'.repeat(t.stars)}${'☆'.repeat(5-t.stars)}</div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-// SUBMISSION
-function setStar(n) {
-  addStars = n;
-  document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('lit', i < n));
-}
-
-function previewPhotos(input) {
-  photoDataURLs = [];
-  Array.from(input.files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      photoDataURLs.push(e.target.result);
-      const img = document.createElement('img');
-      img.src = e.target.result; img.className = 'photo-preview';
-      document.getElementById('photo-previews').appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-async function submitToilet() {
-  const name = document.getElementById('add-name').value;
-  const address = document.getElementById('add-address').value;
-  const { error } = await supabase.from('toilets').insert([{
-    name, address, stars: addStars, photos: photoDataURLs, 
-    type: document.getElementById('add-type').value,
-    price: document.getElementById('add-price').value,
-    user_id: currentUser.id, user_name: currentProfile.name
-  }]);
-  if(error) alert(error.message); else { alert("Merci ! En attente de modération."); closeModal('modal-add'); }
-}
-
-function openAddModal() { document.getElementById('modal-add').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-boot();
-</script>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
@@ -365,8 +133,97 @@ boot();
   };
 
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
+  let currentStars = 0;
+
+  // EXPOSITION DES FONCTIONS AU WINDOW (pour les onclick du HTML)
+  window.showPage = (name) => {
+    document.getElementById('page-login').classList.add('hidden');
+    document.getElementById('page-register').classList.add('hidden');
+    document.getElementById('page-feed').classList.add('hidden');
+    document.getElementById('main-nav').classList.add('hidden');
+
+    document.getElementById('page-' + name).classList.remove('hidden');
+    if (name === 'feed') {
+        document.getElementById('main-nav').classList.remove('hidden');
+        renderFeed();
+    }
+  };
+
+  window.doRegister = async () => {
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const pwd = document.getElementById('reg-pwd').value;
+    try {
+        const res = await createUserWithEmailAndPassword(auth, email, pwd);
+        await updateProfile(res.user, { displayName: name });
+        alert("Compte créé !");
+    } catch (e) { alert(e.message); }
+  };
+
+  window.doLogin = async () => {
+    const email = document.getElementById('login-email').value;
+    const pwd = document.getElementById('login-pwd').value;
+    try { await signInWithEmailAndPassword(auth, email, pwd); } 
+    catch (e) { alert("Erreur connexion"); }
+  };
+
+  window.doLogout = () => signOut(auth);
+
+  window.setStar = (n) => {
+    currentStars = n;
+    document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('lit', i < n));
+  };
+
+  window.submitToilet = async () => {
+    const name = document.getElementById('add-name').value;
+    const addr = document.getElementById('add-address').value;
+    if(!name || !addr) return alert("Remplis tout !");
+
+    try {
+        await addDoc(collection(db, "toilets"), {
+            name, address: addr, stars: currentStars,
+            createdBy: auth.currentUser.displayName,
+            createdAt: new Date()
+        });
+        document.getElementById('modal-add').classList.remove('open');
+        renderFeed();
+    } catch (e) { alert("Erreur d'envoi"); }
+  };
+
+  async function renderFeed() {
+    const grid = document.getElementById('cards-grid');
+    grid.innerHTML = "Chargement...";
+    const q = query(collection(db, "toilets"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
+    grid.innerHTML = "";
+    snap.forEach(doc => {
+        const t = doc.data();
+        const card = document.createElement('div');
+        card.className = 'toilet-card';
+        card.innerHTML = `
+            <div class="card-img">🚽</div>
+            <h3>${t.name}</h3>
+            <p style="font-size:12px; color:gray">${t.address}</p>
+            <div style="color:#EF9F27">${"★".repeat(t.stars)}${"☆".repeat(5-t.stars)}</div>
+            <p style="font-size:10px; margin-top:5px">Par ${t.createdBy}</p>
+        `;
+        grid.appendChild(card);
+    });
+  }
+
+  // SURVEILLANCE AUTH
+  onAuthStateChanged(auth, (user) => {
+    document.getElementById('loading-screen').style.display = 'none';
+    if (user) {
+        window.showPage('feed');
+    } else {
+        window.showPage('login');
+    }
+  });
+
+</script>
 </body>
 </html>
