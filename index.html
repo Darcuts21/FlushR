@@ -2,138 +2,103 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlushR — Trouvez les meilleures toilettes</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FlushR — Profil & Filtres</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --bg:#F7F4EF; --surface:#fff; --surface2:#F0EDE8;
-  --accent:#2D6A4F; --accent2:#52B788; --accent-light:#D8F3DC;
-  --danger:#C1121F; --danger-light:#FDECEA;
-  --warn:#E76F51; --warn-light:#FEF0EB;
-  --text:#1A1A1A; --text2:#5C5C5C; --text3:#9A9A9A;
-  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.14);
-  --radius:14px; --radius-sm:8px;
+  --bg:#F7F4EF; --surface:#fff; --accent:#2D6A4F; --text:#1A1A1A; --text2:#5C5C5C; --border:rgba(0,0,0,0.08); --radius:20px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-h1,h2,h3,h4{font-family:'Syne',sans-serif}
-.hidden{display:none!important}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent;}
+body{font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden}
+.hidden { display: none !important; }
 
-/* LOADING */
-#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px}
-.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* UI ELEMENTS */
+nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100}
+.page{max-width:1000px; margin:0 auto; padding:16px 100px 16px 16px;}
+.cards-grid{display:grid; gap:16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.btn-primary{background:var(--accent); color:white; border:none; padding:14px; border-radius:12px; font-weight:700; width:100%; cursor:pointer}
 
-/* NAV */
-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:50}
-.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.5px}
-.logo span{color:var(--text3);font-weight:400;font-size:13px;margin-left:6px;vertical-align:middle}
+/* CARDS */
+.toilet-card{background:white; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; padding:15px}
+.amenity-tag { font-size: 11px; background: var(--bg); padding: 4px 8px; border-radius: 6px; margin-right:4px; display:inline-block}
 
-/* AUTH & PAGES */
-.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.auth-card{background:var(--surface);border-radius:20px;border:1px solid var(--border);padding:40px;max-width:420px;width:100%}
-.form-group{margin-bottom:16px}
-.form-label{display:block;font-size:12px;font-weight:500;margin-bottom:6px}
-.form-input{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg);font-size:14px;outline:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
-.btn-primary{background:var(--accent);color:white}
-.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}
-.btn-google{background:white;border:1px solid #ddd;width:100%;margin-bottom:15px;color:#444}
-.btn-google img{width:18px}
+/* PROFILE SETUP & SETTINGS */
+.setup-card { background: white; padding: 24px; border-radius: 24px; max-width: 400px; margin: 40px auto; text-align: center; border: 1px solid var(--border); }
+.pref-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 12px; margin-bottom: 8px; }
 
-.separator {display:flex; align-items:center; text-align:center; margin: 20px 0; color: #999; font-size: 12px;}
-.separator::before, .separator::after {content:''; flex:1; border-bottom:1px solid #eee;}
-.separator:not(:empty)::before {margin-right:.5em;}
-.separator:not(:empty)::after {margin-left:.5em;}
-
-/* FEED */
-.page{max-width:900px;margin:0 auto;padding:32px 24px}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
-.toilet-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:15px;cursor:pointer}
-.card-img{height:140px;background:var(--surface2);display:flex;align-items:center;justify-content:center;border-radius:8px;margin-bottom:10px;overflow:hidden}
-
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
-.modal-bg.open{display:flex}
-.modal{background:var(--surface);border-radius:20px;width:90%;max-width:500px;padding:30px;position:relative}
-.star-pick{font-size:24px;cursor:pointer;color:#D3D1C7}.star-pick.lit{color:#EF9F27}
+/* NAVIGATION BASSE */
+.mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; z-index: 150; }
 </style>
 </head>
 <body>
 
-<div id="loading-screen"><div class="spinner"></div><p>Initialisation FlushR...</p></div>
-
 <nav id="main-nav" class="hidden">
-  <div class="logo">FlushR <span>by Lucien</span></div>
-  <div class="nav-right">
-    <button class="btn btn-outline" onclick="window.doLogout()">Déconnexion</button>
-  </div>
+  <div style="font-family:Syne; font-weight:800; color:var(--accent)">FlushR</div>
+  <div id="user-display" style="font-size:12px; color:var(--text2)"></div>
 </nav>
 
-<!-- LOGIN -->
-<div id="page-login" class="auth-wrap hidden">
-  <div class="auth-card">
-    <h2 style="text-align:center;margin-bottom:20px">Connexion</h2>
-    
-    <button class="btn btn-google" onclick="window.doGoogleLogin()">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"> Continuer avec Google
-    </button>
-
-    <div class="separator">OU</div>
-
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email"></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="login-pwd" type="password"></div>
-    <button class="btn btn-primary" style="width:100%" onclick="window.doLogin()">Se connecter</button>
-    <p style="margin-top:15px;text-align:center;font-size:13px">Pas de compte ? <a href="#" onclick="showPage('register')">S'inscrire</a></p>
-  </div>
+<!-- CONNEXION -->
+<div id="page-login" class="page hidden" style="text-align:center; padding-top:100px">
+  <h1 style="font-family:Syne; font-size:40px">FlushR</h1>
+  <button onclick="window.doGoogleLogin()" class="btn-primary" style="max-width:250px; margin-top:20px">Se connecter avec Google</button>
 </div>
 
-<!-- REGISTER -->
-<div id="page-register" class="auth-wrap hidden">
-  <div class="auth-card">
-    <h2 style="text-align:center;margin-bottom:20px">Inscription</h2>
-    <div class="form-group"><label class="form-label">Pseudo</label><input class="form-input" id="reg-name" type="text"></div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email"></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="reg-pwd" type="password"></div>
-    <button class="btn btn-primary" style="width:100%" onclick="window.doRegister()">Créer le compte</button>
-    <p style="margin-top:15px;text-align:center;font-size:13px"><a href="#" onclick="showPage('login')">Retour connexion</a></p>
-  </div>
+<!-- CONFIGURATION INITIALE DU PROFIL -->
+<div id="page-setup" class="page hidden">
+    <div class="setup-card">
+        <h2 style="font-family:Syne">Bienvenue !</h2>
+        <p style="font-size:14px; color:gray; margin-bottom:20px">Configure tes préférences pour un filtrage automatique.</p>
+        <div id="setup-options">
+            <label class="pref-item"><span>🆓 Uniquement Gratuit</span> <input type="checkbox" id="pref-free"></label>
+            <label class="pref-item"><span>♿ Accès PMR requis</span> <input type="checkbox" id="pref-pmr"></label>
+            <label class="pref-item"><span>✨ Toujours Nickel</span> <input type="checkbox" id="pref-clean"></label>
+        </div>
+        <button class="btn-primary" onclick="window.saveProfile()">Terminer la configuration</button>
+    </div>
 </div>
 
-<!-- FEED -->
+<!-- FIL D'ACTUALITÉ -->
 <div id="page-feed" class="hidden">
   <div class="page">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-        <h1>Toilettes</h1>
-        <button class="btn btn-primary" onclick="document.getElementById('modal-add').classList.add('open')">+ Ajouter</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+        <h2 style="font-family:Syne">Pour vous</h2>
+        <span style="font-size:11px; color:var(--accent); font-weight:bold" onclick="showPage('setup')">⚙️ Mes réglages</span>
     </div>
+    <div id="filter-info" style="font-size:12px; color:gray; margin-bottom:15px"></div>
     <div class="cards-grid" id="cards-grid"></div>
   </div>
 </div>
 
-<!-- MODAL ADD -->
-<div class="modal-bg" id="modal-add">
-  <div class="modal">
-    <h3>Ajouter un lieu</h3>
-    <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="add-name" type="text"></div>
-    <div class="form-group"><label class="form-label">Adresse</label><input class="form-input" id="add-address" type="text"></div>
-    <div class="form-group">
-        <label class="form-label">Note</label>
-        <div id="star-container">
-            <span class="star-pick" onclick="window.setStar(1)">★</span><span class="star-pick" onclick="window.setStar(2)">★</span><span class="star-pick" onclick="window.setStar(3)">★</span><span class="star-pick" onclick="window.setStar(4)">★</span><span class="star-pick" onclick="window.setStar(5)">★</span>
-        </div>
+<!-- MODAL AJOUT -->
+<div class="modal-bg hidden" id="modal-add" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; display:flex; align-items:center; justify-content:center" onclick="if(event.target==this) this.classList.add('hidden')">
+  <div style="background:white; padding:24px; border-radius:24px; width:90%; max-width:450px">
+    <h3 style="margin-bottom:15px">Ajouter un lieu</h3>
+    <input type="text" id="add-name" placeholder="Nom" style="width:100%; padding:10px; margin-bottom:10px">
+    <input type="text" id="add-address" placeholder="Adresse" style="width:100%; padding:10px; margin-bottom:10px">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px">
+        <select id="add-price"><option>Gratuit</option><option>Payant</option></select>
+        <select id="add-clean"><option>✨ Nickel</option><option>OK</option><option>⚠️ Sale</option></select>
     </div>
-    <button class="btn btn-primary" style="width:100%" onclick="window.submitToilet()">Publier</button>
-    <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="document.getElementById('modal-add').classList.remove('open')">Fermer</button>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-size:12px">
+        <label><input type="checkbox" id="check-pmr"> ♿ PMR</label>
+        <label><input type="checkbox" id="check-paper"> 🧻 Papier</label>
+    </div>
+    <button class="btn-primary" onclick="window.submitToilet()" style="margin-top:15px">Publier</button>
   </div>
+</div>
+
+<div class="mobile-nav hidden" id="mobile-menu">
+    <div onclick="renderFeed()">🏠</div>
+    <div onclick="document.getElementById('modal-add').classList.remove('hidden')" style="background:var(--accent); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center">+</div>
+    <div onclick="window.doLogout()">🚪</div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
@@ -141,8 +106,7 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24
     projectId: "flushr-ca973",
     storageBucket: "flushr-ca973.firebasestorage.app",
     messagingSenderId: "637232955486",
-    appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf",
-    measurementId: "G-8JD8LF24ZP"
+    appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -150,102 +114,94 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  let currentStars = 0;
+  let userPrefs = null;
 
-  window.showPage = (name) => {
-    document.getElementById('page-login').classList.add('hidden');
-    document.getElementById('page-register').classList.add('hidden');
-    document.getElementById('page-feed').classList.add('hidden');
-    document.getElementById('main-nav').classList.add('hidden');
-
-    document.getElementById('page-' + name).classList.remove('hidden');
-    if (name === 'feed') {
-        document.getElementById('main-nav').classList.remove('hidden');
-        renderFeed();
-    }
-  };
-
-  // NOUVEAU : CONNEXION GOOGLE
-  window.doGoogleLogin = async () => {
-    try {
-        await signInWithPopup(auth, provider);
-    } catch (e) {
-        alert("Erreur Google : " + e.message);
-    }
-  };
-
-  window.doRegister = async () => {
-    const name = document.getElementById('reg-name').value;
-    const email = document.getElementById('reg-email').value;
-    const pwd = document.getElementById('reg-pwd').value;
-    try {
-        const res = await createUserWithEmailAndPassword(auth, email, pwd);
-        await updateProfile(res.user, { displayName: name });
-    } catch (e) { alert(e.message); }
-  };
-
-  window.doLogin = async () => {
-    const email = document.getElementById('login-email').value;
-    const pwd = document.getElementById('login-pwd').value;
-    try { await signInWithEmailAndPassword(auth, email, pwd); } 
-    catch (e) { alert("Email ou mot de passe incorrect"); }
-  };
-
+  window.doGoogleLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e){alert(e.message)} };
   window.doLogout = () => signOut(auth);
 
-  window.setStar = (n) => {
-    currentStars = n;
-    document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('lit', i < n));
+  // SAUVEGARDE DU PROFIL
+  window.saveProfile = async () => {
+    const prefs = {
+        onlyFree: document.getElementById('pref-free').checked,
+        onlyPMR: document.getElementById('pref-pmr').checked,
+        onlyClean: document.getElementById('pref-clean').checked,
+        setupDone: true
+    };
+    await setDoc(doc(db, "users", auth.currentUser.uid), prefs);
+    userPrefs = prefs;
+    showPage('feed');
   };
 
   window.submitToilet = async () => {
-    const name = document.getElementById('add-name').value;
-    const addr = document.getElementById('add-address').value;
-    if(!name || !addr) return alert("Remplis tout !");
-
-    try {
-        await addDoc(collection(db, "toilets"), {
-            name, address: addr, stars: currentStars,
-            createdBy: auth.currentUser.displayName || auth.currentUser.email,
-            createdAt: new Date()
-        });
-        document.getElementById('modal-add').classList.remove('open');
-        renderFeed();
-    } catch (e) { alert("Erreur d'envoi"); }
+    const data = {
+        name: document.getElementById('add-name').value,
+        address: document.getElementById('add-address').value,
+        price: document.getElementById('add-price').value,
+        clean: document.getElementById('add-clean').value,
+        hasPMR: document.getElementById('check-pmr').checked,
+        createdBy: auth.currentUser.displayName,
+        createdAt: new Date()
+    };
+    await addDoc(collection(db, "toilets"), data);
+    document.getElementById('modal-add').classList.add('hidden');
+    renderFeed();
   };
 
   async function renderFeed() {
     const grid = document.getElementById('cards-grid');
     grid.innerHTML = "Chargement...";
-    try {
-        const q = query(collection(db, "toilets"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        grid.innerHTML = "";
-        snap.forEach(doc => {
-            const t = doc.data();
-            const card = document.createElement('div');
-            card.className = 'toilet-card';
-            card.innerHTML = `
-                <div class="card-img">🚽</div>
-                <h3>${t.name}</h3>
-                <p style="font-size:12px; color:gray">${t.address}</p>
-                <div style="color:#EF9F27">${"★".repeat(t.stars)}${"☆".repeat(5-t.stars)}</div>
-                <p style="font-size:10px; margin-top:5px">Par ${t.createdBy}</p>
-            `;
-            grid.appendChild(card);
-        });
-    } catch (e) { grid.innerHTML = "Erreur de chargement des données."; }
+    const snap = await getDocs(query(collection(db, "toilets"), orderBy("createdAt", "desc")));
+    grid.innerHTML = "";
+    
+    let count = 0;
+    snap.forEach(doc => {
+        const t = doc.data();
+        
+        // LOGIQUE DE FILTRAGE AUTOMATIQUE SELON LE PROFIL
+        if (userPrefs.onlyFree && t.price !== 'Gratuit') return;
+        if (userPrefs.onlyPMR && !t.hasPMR) return;
+        if (userPrefs.onlyClean && t.clean !== '✨ Nickel') return;
+
+        count++;
+        const card = document.createElement('div');
+        card.className = 'toilet-card';
+        card.innerHTML = `
+            <span class="amenity-tag">${t.price}</span>
+            <h3 style="margin:8px 0">${t.name}</h3>
+            <p style="font-size:12px; color:gray">📍 ${t.address}</p>
+            <div style="margin-top:10px">
+                ${t.hasPMR ? '<span class="amenity-tag">♿ PMR</span>' : ''}
+                <span class="amenity-tag">${t.clean}</span>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+
+    document.getElementById('filter-info').innerText = `${count} lieux correspondent à vos préférences.`;
   }
 
-  onAuthStateChanged(auth, (user) => {
-    document.getElementById('loading-screen').style.display = 'none';
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-        window.showPage('feed');
+        document.getElementById('user-display').innerText = user.displayName;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().setupDone) {
+            userPrefs = userDoc.data();
+            showPage('feed');
+        } else {
+            showPage('setup');
+        }
     } else {
-        window.showPage('login');
+        showPage('login');
     }
   });
 
+  function showPage(p) {
+    ['login', 'setup', 'feed'].forEach(id => document.getElementById('page-'+id).classList.add('hidden'));
+    document.getElementById('main-nav').classList.toggle('hidden', p === 'login');
+    document.getElementById('mobile-menu').classList.toggle('hidden', p !== 'feed');
+    document.getElementById('page-'+p).classList.remove('hidden');
+    if(p === 'feed') renderFeed();
+  }
 </script>
 </body>
 </html>
