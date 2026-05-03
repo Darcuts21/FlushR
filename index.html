@@ -6,120 +6,12 @@
 <title>FlushR — Trouvez les meilleures toilettes</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<!-- ============================================================
-  🚽 FLUSHR — GitHub Pages + Supabase
-  ============================================================
-
-  ÉTAPE 1 — Crée un projet Supabase (gratuit)
-  ─────────────────────────────────────────────
-  1. Va sur https://supabase.com et crée un compte
-  2. Clique "New project", donne lui un nom (ex: flushr)
-  3. Attends ~1 minute que le projet se crée
-
-  ÉTAPE 2 — Récupère tes clés
-  ─────────────────────────────────────────────
-  Dans ton projet Supabase :
-  → Settings (⚙️ en bas à gauche) > API
-  → Copie "Project URL"  → colle dans SUPABASE_URL ci-dessous
-  → Copie "anon public"  → colle dans SUPABASE_ANON_KEY ci-dessous
-
-  ÉTAPE 3 — Crée les tables SQL
-  ─────────────────────────────────────────────
-  Dans Supabase → SQL Editor → New query → colle et exécute :
-
-  ┌─────────────────────────────────────────────────────────┐
-
-  create table profiles (
-    id uuid references auth.users primary key,
-    name text not null,
-    role text default 'user',
-    created_at timestamptz default now()
-  );
-
-  create table toilets (
-    id uuid primary key default gen_random_uuid(),
-    name text not null,
-    address text not null,
-    comment text,
-    type text not null,
-    price text not null,
-    pmr text,
-    stars int not null,
-    photos text[],
-    status text default 'pending',
-    user_id uuid references profiles(id),
-    user_name text,
-    created_at timestamptz default now()
-  );
-
-  create table reviews (
-    id uuid primary key default gen_random_uuid(),
-    toilet_id uuid references toilets(id) on delete cascade,
-    user_id uuid references profiles(id),
-    user_name text,
-    stars int not null,
-    text text not null,
-    created_at timestamptz default now()
-  );
-
-  -- Activer la lecture publique
-  alter table toilets enable row level security;
-  alter table reviews enable row level security;
-  alter table profiles enable row level security;
-
-  create policy "lecture publique toilettes" on toilets for select using (true);
-  create policy "lecture publique reviews" on reviews for select using (true);
-  create policy "lecture publique profils" on profiles for select using (true);
-  create policy "insert propre toilette" on toilets for insert with check (auth.uid() = user_id);
-  create policy "insert propre review" on reviews for insert with check (auth.uid() = user_id);
-  create policy "update admin toilette" on toilets for update using (
-    exists (select 1 from profiles where id = auth.uid() and role = 'admin')
-  );
-  create policy "delete admin toilette" on toilets for delete using (
-    exists (select 1 from profiles where id = auth.uid() and role = 'admin')
-  );
-  create policy "insert profil" on profiles for insert with check (auth.uid() = id);
-  create policy "update propre profil" on profiles for update using (auth.uid() = id);
-
-  -- Trigger : crée automatiquement un profil à l'inscription
-  create or replace function public.handle_new_user()
-  returns trigger as $$
-  begin
-    insert into public.profiles (id, name, role)
-    values (new.id, new.raw_user_meta_data->>'name', 'user');
-    return new;
-  end;
-  $$ language plpgsql security definer;
-
-  create trigger on_auth_user_created
-    after insert on auth.users
-    for each row execute procedure public.handle_new_user();
-
-  └─────────────────────────────────────────────────────────┘
-
-  ÉTAPE 4 — Rends-toi admin
-  ─────────────────────────────────────────────
-  1. Lance le site et inscris-toi avec ton email
-  2. Dans Supabase → Table Editor → profiles
-  3. Trouve ta ligne, change "role" de "user" à "admin"
-  4. Sauvegarde → tu as accès au panel modération
-
-  ÉTAPE 5 — Mettre sur GitHub Pages
-  ─────────────────────────────────────────────
-  1. Crée un repo GitHub (public)
-  2. Upload ce fichier renommé en "index.html"
-  3. Settings → Pages → Source: main branch / root
-  4. Ton site est live sur https://tonpseudo.github.io/tonrepo
-
-  ============================================================ -->
-
 <script>
   // ============================================================
-  // 🔧 COLLE TES CLÉS SUPABASE ICI (lignes 2 et 3)
+  // 🔧 COLLE TES CLÉS SUPABASE ICI
   // ============================================================
   const SUPABASE_URL  = 'COLLE_TON_PROJECT_URL_ICI';
   const SUPABASE_ANON_KEY = 'COLLE_TA_ANON_KEY_ICI';
-  // ============================================================
 </script>
 
 <style>
@@ -183,7 +75,7 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24
 .error-msg{background:var(--danger-light);color:var(--danger);font-size:13px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;border:1px solid rgba(193,18,31,.15)}
 .success-msg{background:var(--accent-light);color:var(--accent);font-size:13px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;border:1px solid rgba(45,106,79,.2)}
 
-/* FEED */
+/* FEED & CARDS */
 .feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap}
 .feed-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800}
 .feed-title span{color:var(--accent)}
@@ -193,9 +85,6 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24
 .filter-pill.active{background:var(--accent);color:white;border-color:var(--accent)}
 .search-row{display:flex;gap:10px;margin-bottom:16px}
 .search-row .form-input{max-width:340px}
-.section-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:16px}
-
-/* CARDS */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .toilet-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:border .15s,transform .15s;cursor:pointer}
 .toilet-card:hover{border-color:var(--border2);transform:translateY(-2px)}
@@ -212,106 +101,32 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24
 .badge-pay{background:var(--danger-light);color:var(--danger)}
 .badge-free{background:var(--accent-light);color:var(--accent)}
 .badge-pmr{background:#EEEDFE;color:#3C3489}
-.card-stats{display:flex;align-items:center;justify-content:space-between}
 .stars-row{display:flex;gap:2px;align-items:center}
 .star{font-size:13px}.star.full{color:#EF9F27}.star.empty{color:#D3D1C7}
-.rating-label{font-size:12px;color:var(--text3);margin-left:5px}
-.card-by{font-size:11px;color:var(--text3)}
 
-/* EMPTY */
-.empty-state{text-align:center;padding:60px 24px;color:var(--text3)}
-.empty-state .empty-icon{font-size:48px;margin-bottom:12px;opacity:.5}
-.empty-state p{font-size:15px}
-
-/* MODAL */
+/* MODAL & OTHERS */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;overflow-y:auto;padding:40px 20px}
 .modal-bg.open{display:flex;align-items:flex-start;justify-content:center}
 .modal{background:var(--surface);border-radius:20px;width:100%;max-width:560px;padding:32px;position:relative}
 .modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:none;border-radius:99px;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
-.modal-close:hover{background:var(--border2)}
-.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:24px}
-
-/* STAR PICKER */
 .star-picker{display:flex;gap:8px;margin-top:4px}
 .star-pick{font-size:26px;cursor:pointer;color:#D3D1C7;transition:color .1s}
 .star-pick.lit{color:#EF9F27}
-
-/* PHOTO */
-.photo-upload-area{border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer;transition:border .15s}
-.photo-upload-area:hover{border-color:var(--accent2)}
-.photo-upload-area p{font-size:13px;color:var(--text3);margin-top:6px}
+.photo-upload-area{border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer}
 .photo-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .photo-preview{width:72px;height:72px;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border)}
-
-/* DETAIL */
-.detail-photos{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px}
-.detail-photos img{height:180px;border-radius:var(--radius-sm);flex-shrink:0;object-fit:cover}
-.detail-photo-placeholder{height:180px;width:260px;background:var(--surface2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:52px;opacity:.4;flex-shrink:0}
-.detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.detail-meta-item{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px}
-.detail-meta-label{font-size:11px;color:var(--text3);margin-bottom:3px}
-.detail-meta-val{font-size:14px;font-weight:500}
-.detail-comment{background:var(--bg);border-radius:var(--radius-sm);padding:14px;font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px}
-.clean-bar-wrap{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:4px}
-.clean-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#52B788,#2D6A4F)}
-
-/* REVIEWS */
-.reviews-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-.review-item{background:var(--bg);border-radius:var(--radius-sm);padding:14px}
-.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.review-user{font-size:13px;font-weight:500}
-.review-date{font-size:11px;color:var(--text3)}
-.review-text{font-size:13px;color:var(--text2);line-height:1.5}
-.add-review-form{border-top:1px solid var(--border);margin-top:20px;padding-top:20px}
-.add-review-title{font-size:14px;font-weight:500;margin-bottom:12px}
-
-/* MODERATION */
-.mod-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.mod-header h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
-.mod-badge{background:var(--warn);color:white;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}
-.mod-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start}
-.mod-info{flex:1;min-width:0}
-.mod-name{font-weight:500;font-size:15px;margin-bottom:4px}
-.mod-by{font-size:12px;color:var(--text3);margin-bottom:8px}
-.mod-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px}
-.tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);transition:all .15s;margin-bottom:-1px}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:white;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;z-index:9999;transition:transform .3s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:white;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;z-index:9999;transition:transform .3s;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-select.form-input{appearance:auto}
-textarea.form-input{resize:vertical;min-height:80px}
-@media(max-width:600px){
-  .page{padding:20px 16px}
-  .cards-grid{grid-template-columns:1fr}
-  .detail-meta{grid-template-columns:1fr}
-  .mod-card{flex-direction:column}
-  .modal{padding:24px 16px}
-}
+@media(max-width:600px){ .page{padding:20px 16px} .cards-grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading-screen">
-  <div class="spinner"></div>
-  <div style="font-size:13px;color:var(--text3)">Chargement…</div>
-</div>
-
-<!-- SETUP BANNER (masqué si les clés sont configurées) -->
-<div id="setup-banner" class="hidden">
-  ⚠️ <strong>Configuration requise :</strong>
-  Ouvre ce fichier dans un éditeur, cherche <code>COLLE_TON_PROJECT_URL_ICI</code>
-  et remplace par tes clés Supabase. Les instructions complètes sont dans les commentaires en haut du fichier.
-</div>
-
-<!-- TOAST -->
+<div id="loading-screen"><div class="spinner"></div><div style="font-size:13px;color:var(--text3)">Chargement…</div></div>
+<div id="setup-banner" class="hidden">⚠️ <strong>Configuration requise :</strong> Remplace les clés Supabase dans le code.</div>
 <div class="toast" id="toast"></div>
 
-<!-- NAV -->
 <nav id="main-nav" class="hidden">
   <div class="logo">FlushR <span>trouve tes toilettes</span></div>
   <div class="nav-right">
@@ -321,359 +136,146 @@ textarea.form-input{resize:vertical;min-height:80px}
   </div>
 </nav>
 
-<!-- ===== LOGIN ===== -->
+<!-- PAGES -->
 <div id="page-login" class="auth-wrap hidden">
   <div class="auth-card">
     <div class="auth-logo">🚽 FlushR</div>
-    <div class="auth-sub">La communauté des toilettes propres</div>
     <div id="login-error" class="error-msg hidden"></div>
     <div class="form-group">
       <label class="form-label">Email</label>
-      <input class="form-input" id="login-email" type="email" placeholder="toi@mail.com">
+      <input class="form-input" id="login-email" type="email">
     </div>
     <div class="form-group">
       <label class="form-label">Mot de passe</label>
-      <input class="form-input" id="login-pwd" type="password" placeholder="••••••••"
-        onkeydown="if(event.key==='Enter') doLogin()">
+      <input class="form-input" id="login-pwd" type="password">
     </div>
     <button class="btn btn-primary" style="width:100%" id="login-btn" onclick="doLogin()">Se connecter</button>
     <div class="auth-switch">Pas encore de compte ? <a onclick="showPage('register')">S'inscrire</a></div>
   </div>
 </div>
 
-<!-- ===== REGISTER ===== -->
 <div id="page-register" class="auth-wrap hidden">
   <div class="auth-card">
     <div class="auth-logo">🚽 FlushR</div>
-    <div class="auth-sub">Crée ton compte gratuit</div>
     <div id="reg-error" class="error-msg hidden"></div>
-    <div id="reg-success" class="success-msg hidden"></div>
-    <div class="form-group">
-      <label class="form-label">Pseudo</label>
-      <input class="form-input" id="reg-name" type="text" placeholder="PipiDuRoi">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" id="reg-email" type="email" placeholder="toi@mail.com">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Mot de passe</label>
-      <input class="form-input" id="reg-pwd" type="password" placeholder="Min. 10 caractères, majuscule + chiffre + symbole">
-      <div class="form-hint" id="pwd-strength-hint"></div>
-    </div>
+    <div class="form-group"><label class="form-label">Pseudo</label><input class="form-input" id="reg-name" type="text"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email"></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="reg-pwd" type="password"></div>
     <button class="btn btn-primary" style="width:100%" id="reg-btn" onclick="doRegister()">Créer mon compte</button>
     <div class="auth-switch">Déjà un compte ? <a onclick="showPage('login')">Se connecter</a></div>
   </div>
 </div>
 
-<!-- ===== FEED ===== -->
 <div id="page-feed" class="hidden">
   <div class="page">
     <div class="feed-header">
-      <div>
-        <div class="feed-title">Toilettes <span>près de chez vous</span></div>
-        <div style="font-size:13px;color:var(--text3);margin-top:4px">Découvrez et partagez les meilleures toilettes</div>
-      </div>
+      <div class="feed-title">Toilettes <span>près de chez vous</span></div>
       <button class="btn btn-primary" onclick="openAddModal()">+ Ajouter</button>
     </div>
-    <div class="search-row">
-      <input class="form-input" id="search-input" type="text" placeholder="Rechercher un lieu, une ville..." oninput="renderFeed()">
-    </div>
+    <div class="search-row"><input class="form-input" id="search-input" type="text" placeholder="Rechercher..." oninput="renderFeed()"></div>
     <div class="filters">
       <div class="filter-pill active" onclick="setFilter('all',this)">Tous</div>
       <div class="filter-pill" onclick="setFilter('public',this)">Public</div>
       <div class="filter-pill" onclick="setFilter('prive',this)">Privé</div>
       <div class="filter-pill" onclick="setFilter('gratuit',this)">Gratuit</div>
-      <div class="filter-pill" onclick="setFilter('payant',this)">Payant</div>
       <div class="filter-pill" onclick="setFilter('pmr',this)">PMR ♿</div>
     </div>
-    <div class="section-title" id="feed-count"></div>
     <div class="cards-grid" id="cards-grid"></div>
-    <div class="empty-state hidden" id="empty-state">
-      <div class="empty-icon">🚽</div>
-      <p>Aucune toilette trouvée.<br>Soyez le premier à en ajouter !</p>
-    </div>
+    <div id="empty-state" class="hidden" style="text-align:center;padding:40px;color:var(--text3)">Aucun résultat trouvé.</div>
   </div>
 </div>
 
-<!-- ===== MODERATION ===== -->
-<div id="page-moderation" class="hidden">
-  <div class="page">
-    <div style="margin-bottom:16px">
-      <a onclick="showPage('feed')" style="font-size:13px;color:var(--text3);cursor:pointer">← Retour au feed</a>
-    </div>
-    <div class="mod-header">
-      <h2>Modération</h2>
-      <span class="mod-badge" id="mod-count">0 en attente</span>
-    </div>
-    <div class="tabs">
-      <div class="tab active" onclick="showModTab('pending',this)">En attente</div>
-      <div class="tab" onclick="showModTab('approved',this)">Approuvés</div>
-      <div class="tab" onclick="showModTab('rejected',this)">Rejetés</div>
-    </div>
-    <div id="mod-list"></div>
-  </div>
-</div>
-
-<!-- ===== MODAL ADD ===== -->
+<!-- MODAL ADD -->
 <div class="modal-bg" id="modal-add">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-add')">✕</button>
-    <div class="modal-title">Ajouter des toilettes</div>
+    <h3 style="margin-bottom:20px">Ajouter des toilettes</h3>
+    <div class="form-group"><label class="form-label">Nom du lieu *</label><input class="form-input" id="add-name" type="text"></div>
+    <div class="form-group"><label class="form-label">Adresse *</label><input class="form-input" id="add-address" type="text"></div>
     <div class="form-group">
-      <label class="form-label">Nom du lieu *</label>
-      <input class="form-input" id="add-name" type="text" placeholder="Ex: WC Mairie de Lyon">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Adresse *</label>
-      <input class="form-input" id="add-address" type="text" placeholder="Ex: 1 Place de la Comédie, Lyon">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Commentaire</label>
-      <textarea class="form-input" id="add-comment" placeholder="Décrivez l'état, l'accessibilité, les horaires..."></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group">
-        <label class="form-label">Type d'accès</label>
-        <select class="form-input" id="add-type">
-          <option value="public">Public</option>
-          <option value="prive">Privé</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Tarification</label>
-        <select class="form-input" id="add-price">
-          <option value="gratuit">Gratuit</option>
-          <option value="payant">Payant</option>
-        </select>
+      <label class="form-label">Type & Prix</label>
+      <div style="display:flex;gap:10px">
+        <select class="form-input" id="add-type"><option value="public">Public</option><option value="prive">Privé</option></select>
+        <select class="form-input" id="add-price"><option value="gratuit">Gratuit</option><option value="payant">Payant</option></select>
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Accessibilité PMR</label>
-      <select class="form-input" id="add-pmr">
-        <option value="">Non renseigné</option>
-        <option value="yes">Accessible PMR ♿</option>
-        <option value="no">Non accessible</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Note de propreté *</label>
-      <div class="star-picker" id="add-stars-picker">
-        <span class="star-pick" onclick="setStar(1)">★</span>
-        <span class="star-pick" onclick="setStar(2)">★</span>
-        <span class="star-pick" onclick="setStar(3)">★</span>
-        <span class="star-pick" onclick="setStar(4)">★</span>
-        <span class="star-pick" onclick="setStar(5)">★</span>
-      </div>
-      <div class="form-hint">Cliquez pour noter la propreté</div>
+        <label class="form-label">Note de propreté</label>
+        <div class="star-picker" id="add-stars-picker">
+            <span class="star-pick" onclick="setStar(1)">★</span><span class="star-pick" onclick="setStar(2)">★</span><span class="star-pick" onclick="setStar(3)">★</span><span class="star-pick" onclick="setStar(4)">★</span><span class="star-pick" onclick="setStar(5)">★</span>
+        </div>
     </div>
     <div class="form-group">
       <label class="form-label">Photos (max 3)</label>
-      <div class="photo-upload-area" onclick="document.getElementById('add-photos-input').click()">
-        <div style="font-size:28px;opacity:.5">📷</div>
-        <p>Cliquez pour ajouter des photos</p>
-      </div>
+      <div class="photo-upload-area" onclick="document.getElementById('add-photos-input').click()">📷 Cliquez pour ajouter</div>
       <input type="file" id="add-photos-input" multiple accept="image/*" style="display:none" onchange="previewPhotos(this)">
       <div class="photo-previews" id="photo-previews"></div>
     </div>
     <div id="add-error" class="error-msg hidden"></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:8px" id="add-submit-btn" onclick="submitToilet()">Soumettre</button>
-    <div class="form-hint" style="text-align:center;margin-top:8px">Votre soumission sera examinée avant publication.</div>
+    <button class="btn btn-primary" style="width:100%" id="add-submit-btn" onclick="submitToilet()">Soumettre</button>
   </div>
 </div>
 
-<!-- ===== MODAL DETAIL ===== -->
-<div class="modal-bg" id="modal-detail">
-  <div class="modal" style="max-width:620px">
-    <button class="modal-close" onclick="closeModal('modal-detail')">✕</button>
-    <div id="detail-content"></div>
-  </div>
-</div>
-
-<!-- Supabase JS SDK via CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ============================================================
-// INIT SUPABASE
-// ============================================================
+// INITIALISATION & LOGIQUE APP
 let supabase;
 let currentUser = null;
 let currentProfile = null;
 let currentFilter = 'all';
 let addStars = 0;
 let photoDataURLs = [];
-let reviewStarsVal = 0;
-let modTab = 'pending';
-
-function isConfigured() {
-  return SUPABASE_URL !== 'COLLE_TON_PROJECT_URL_ICI' && SUPABASE_ANON_KEY !== 'COLLE_TA_ANON_KEY_ICI';
-}
 
 async function boot() {
-  if (!isConfigured()) {
+  if (SUPABASE_URL === 'COLLE_TON_PROJECT_URL_ICI') {
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('setup-banner').classList.remove('hidden');
-    document.getElementById('page-login').classList.remove('hidden');
-    document.getElementById('login-btn').disabled = true;
-    document.getElementById('login-error').textContent = '⚠️ Configure tes clés Supabase dans le fichier (voir les commentaires en haut).';
-    document.getElementById('login-error').classList.remove('hidden');
     return;
   }
-
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
     currentUser = session.user;
     await loadProfile();
-    showLoading(false);
     showPage('feed');
   } else {
-    showLoading(false);
     showPage('login');
   }
-
-  // Écoute les changements d'auth
-  supabase.auth.onAuthStateChange(async (_event, session) => {
-    if (session) {
-      currentUser = session.user;
-      await loadProfile();
-    } else {
-      currentUser = null;
-      currentProfile = null;
-    }
-  });
+  document.getElementById('loading-screen').style.display = 'none';
 }
 
 async function loadProfile() {
-  if (!currentUser) return;
   const { data } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
   currentProfile = data;
 }
 
-function showLoading(on) {
-  document.getElementById('loading-screen').style.display = on ? 'flex' : 'none';
-}
-
-// ============================================================
-// PAGES
-// ============================================================
-const pages = ['login','register','feed','moderation'];
-
 function showPage(name) {
-  pages.forEach(p => {
-    const el = document.getElementById('page-'+p);
-    if (el) el.classList.add('hidden');
-  });
-  const target = document.getElementById('page-'+name);
-  if (target) target.classList.remove('hidden');
-
-  const nav = document.getElementById('main-nav');
-  if (name === 'feed' || name === 'moderation') {
-    nav.classList.remove('hidden');
-    updateNav();
-  } else {
-    nav.classList.add('hidden');
-  }
-
-  if (name === 'feed') renderFeed();
-  if (name === 'moderation') renderModeration();
-  window.scrollTo(0, 0);
+  ['login','register','feed'].forEach(p => document.getElementById('page-'+p).classList.add('hidden'));
+  document.getElementById('page-'+name).classList.remove('hidden');
+  document.getElementById('main-nav').classList.toggle('hidden', name !== 'feed');
+  if(name === 'feed') renderFeed();
 }
 
-function updateNav() {
-  if (!currentProfile) return;
-  document.getElementById('nav-user-info').innerHTML =
-    `Bonjour, <strong>${escHtml(currentProfile.name)}</strong>${currentProfile.role==='admin'?'<span class="badge-admin">ADMIN</span>':''}`;
-  const modBtn = document.getElementById('mod-btn');
-  if (currentProfile.role === 'admin') modBtn.classList.remove('hidden');
-  else modBtn.classList.add('hidden');
-}
-
-// ============================================================
-// CRYPTO (mot de passe strength check côté client)
-// ============================================================
-function pwdStrength(pwd) {
-  let score = 0;
-  if (pwd.length >= 10) score++;
-  if (pwd.length >= 14) score++;
-  if (/[A-Z]/.test(pwd)) score++;
-  if (/[0-9]/.test(pwd)) score++;
-  if (/[^A-Za-z0-9]/.test(pwd)) score++;
-  return score;
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const pwdInput = document.getElementById('reg-pwd');
-  if (pwdInput) pwdInput.addEventListener('input', () => {
-    const s = pwdStrength(pwdInput.value);
-    const hint = document.getElementById('pwd-strength-hint');
-    const labels = ['','Très faible 🔴','Faible 🟠','Moyen 🟡','Fort 🟢','Très fort 💪'];
-    hint.textContent = pwdInput.value ? `Force : ${labels[Math.min(s,5)]}` : '';
-  });
-});
-
-// ============================================================
-// AUTH — Supabase gère tout (email/mdp hashé côté serveur)
-// ============================================================
+// AUTH
 async function doLogin() {
-  const email = document.getElementById('login-email').value.trim();
+  const email = document.getElementById('login-email').value;
   const pwd = document.getElementById('login-pwd').value;
-  const errEl = document.getElementById('login-error');
-  const btn = document.getElementById('login-btn');
-
-  if (!email || !pwd) { errEl.textContent = 'Remplissez tous les champs.'; errEl.classList.remove('hidden'); return; }
-
-  btn.disabled = true; btn.textContent = 'Connexion…';
   const { error } = await supabase.auth.signInWithPassword({ email, password: pwd });
-  btn.disabled = false; btn.textContent = 'Se connecter';
-
-  if (error) {
-    errEl.textContent = 'Email ou mot de passe incorrect.';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  errEl.classList.add('hidden');
-  await loadProfile();
-  showPage('feed');
+  if (error) alert("Erreur d'identification"); else location.reload();
 }
 
 async function doRegister() {
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pwd = document.getElementById('reg-pwd').value;
-  const errEl = document.getElementById('reg-error');
-  const sucEl = document.getElementById('reg-success');
-  const btn = document.getElementById('reg-btn');
-  errEl.classList.add('hidden'); sucEl.classList.add('hidden');
-
-  if (!name || !email || !pwd) { errEl.textContent = 'Tous les champs sont requis.'; errEl.classList.remove('hidden'); return; }
-  if (pwd.length < 10) { errEl.textContent = 'Mot de passe trop court (min. 10 caractères).'; errEl.classList.remove('hidden'); return; }
-  if (pwdStrength(pwd) < 3) { errEl.textContent = 'Mot de passe trop faible — ajoute des majuscules, chiffres et symboles.'; errEl.classList.remove('hidden'); return; }
-
-  btn.disabled = true; btn.textContent = 'Création…';
-  const { error } = await supabase.auth.signUp({
-    email, password: pwd,
-    options: { data: { name } }
-  });
-  btn.disabled = false; btn.textContent = 'Créer mon compte';
-
-  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-  sucEl.textContent = '✅ Compte créé ! Vérifie tes emails pour confirmer, puis connecte-toi.';
-  sucEl.classList.remove('hidden');
-  setTimeout(() => showPage('login'), 3000);
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const pwd = document.getElementById('reg-pwd').value;
+    const { error } = await supabase.auth.signUp({ email, password: pwd, options: { data: { name } } });
+    if (error) alert(error.message); else alert("Vérifiez vos emails !");
 }
 
-async function doLogout() {
-  await supabase.auth.signOut();
-  currentUser = null; currentProfile = null;
-  showPage('login');
-}
+function doLogout() { supabase.auth.signOut(); location.reload(); }
 
-// ============================================================
-// FEED
-// ============================================================
+// FEED & FILTERS
 function setFilter(f, el) {
   currentFilter = f;
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
@@ -683,328 +285,88 @@ function setFilter(f, el) {
 
 async function renderFeed() {
   const grid = document.getElementById('cards-grid');
-  const empty = document.getElementById('empty-state');
-  const countEl = document.getElementById('feed-count');
-  const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const search = document.getElementById('search-input').value.toLowerCase();
+  let query = supabase.from('toilets').select('*').eq('status','approved');
+  
+  const { data: toilets } = await query;
+  grid.innerHTML = '';
 
-  grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:13px">Chargement…</div>';
+  const filtered = (toilets || []).filter(t => {
+    const matchSearch = t.name.toLowerCase().includes(search) || t.address.toLowerCase().includes(search);
+    const matchType = currentFilter === 'all' || t.type === currentFilter || t.price === currentFilter || (currentFilter === 'pmr' && t.pmr === 'yes');
+    return matchSearch && matchType;
+  });
 
-  let query = supabase.from('toilets').select('*, reviews(*)').eq('status','approved').order('created_at', { ascending: false });
-
-  if (currentFilter === 'public') query = query.eq('type','public');
-  else if (currentFilter === 'prive') query = query.eq('type','prive');
-  else if (currentFilter === 'gratuit') query = query.eq('price','gratuit');
-  else if (currentFilter === 'payant') query = query.eq('price','payant');
-  else if (currentFilter === 'pmr') query = query.eq('pmr','yes');
-
-  const { data: toilets, error } = await query;
-  if (error) { grid.innerHTML = `<div style="color:var(--danger);font-size:13px">Erreur : ${error.message}</div>`; return; }
-
-  let filtered = toilets || [];
-  if (search) filtered = filtered.filter(t => t.name.toLowerCase().includes(search) || t.address.toLowerCase().includes(search));
-
-  countEl.textContent = `${filtered.length} toilette${filtered.length!==1?'s':''} trouvée${filtered.length!==1?'s':''}`;
-
-  if (!filtered.length) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
-  empty.classList.add('hidden');
-  grid.innerHTML = filtered.map(t => toiletCardHTML(t)).join('');
-}
-
-function toiletCardHTML(t) {
-  const avg = getAvgStars(t);
-  const count = 1 + (t.reviews?.length || 0);
-  return `<div class="toilet-card" onclick="openDetail('${t.id}')">
-    <div class="card-img">
-      ${t.photos?.length ? `<img src="${escHtml(t.photos[0])}" alt="">` : '<div class="card-img-placeholder">🚽</div>'}
-    </div>
-    <div class="card-body">
-      <div class="card-name">${escHtml(t.name)}</div>
-      <div class="card-address">📍 ${escHtml(t.address)}</div>
-      <div class="card-badges">
-        <span class="badge ${t.type==='public'?'badge-pub':'badge-priv'}">${t.type==='public'?'Public':'Privé'}</span>
-        <span class="badge ${t.price==='gratuit'?'badge-free':'badge-pay'}">${t.price==='gratuit'?'Gratuit':'Payant'}</span>
-        ${t.pmr==='yes'?'<span class="badge badge-pmr">PMR ♿</span>':''}
+  filtered.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'toilet-card';
+    card.innerHTML = `
+      <div class="card-img">${t.photos?.length ? `<img src="${t.photos[0]}">` : '🚽'}</div>
+      <div class="card-body">
+        <div class="card-name">${t.name}</div>
+        <div class="card-address">${t.address}</div>
+        <div class="stars-row">${'★'.repeat(t.stars)}${'☆'.repeat(5-t.stars)}</div>
       </div>
-      <div class="card-stats">
-        <div class="stars-row">${starsHTML(avg)}<span class="rating-label">${avg.toFixed(1)} (${count} avis)</span></div>
-        <span class="card-by">par ${escHtml(t.user_name||'?')}</span>
-      </div>
-    </div>
-  </div>`;
+    `;
+    grid.appendChild(card);
+  });
 }
 
-function getAvgStars(t) {
-  const reviews = t.reviews || [];
-  if (!reviews.length) return t.stars;
-  return reviews.reduce((s,r) => s+r.stars, t.stars) / (1 + reviews.length);
-}
-
-function starsHTML(val) {
-  return Array.from({length:5},(_,i)=>`<span class="star ${i<Math.round(val)?'full':'empty'}">★</span>`).join('');
-}
-
-// ============================================================
-// ADD TOILET
-// ============================================================
-function openAddModal() {
-  addStars = 0; photoDataURLs = [];
-  ['add-name','add-comment','add-address'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('add-type').value = 'public';
-  document.getElementById('add-price').value = 'gratuit';
-  document.getElementById('add-pmr').value = '';
-  document.getElementById('photo-previews').innerHTML = '';
-  document.getElementById('add-error').classList.add('hidden');
-  document.querySelectorAll('#add-stars-picker .star-pick').forEach(s => s.classList.remove('lit'));
-  document.getElementById('modal-add').classList.add('open');
-}
-
-function setStar(val) {
-  addStars = val;
-  document.querySelectorAll('#add-stars-picker .star-pick').forEach((s,i) => s.classList.toggle('lit', i<val));
+// SUBMISSION
+function setStar(n) {
+  addStars = n;
+  document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('lit', i < n));
 }
 
 function previewPhotos(input) {
   photoDataURLs = [];
-  const prev = document.getElementById('photo-previews');
-  prev.innerHTML = '';
-  Array.from(input.files).slice(0,3).forEach(file => {
+  Array.from(input.files).forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = (e) => {
       photoDataURLs.push(e.target.result);
       const img = document.createElement('img');
       img.src = e.target.result; img.className = 'photo-preview';
-      prev.appendChild(img);
+      document.getElementById('photo-previews').appendChild(img);
     };
     reader.readAsDataURL(file);
   });
 }
 
 async function submitToilet() {
-  const name = document.getElementById('add-name').value.trim();
-  const address = document.getElementById('add-address').value.trim();
-  const errEl = document.getElementById('add-error');
-  const btn = document.getElementById('add-submit-btn');
-
-  if (!name || !address) { errEl.textContent = 'Nom et adresse sont requis.'; errEl.classList.remove('hidden'); return; }
-  if (!addStars) { errEl.textContent = 'Veuillez attribuer une note de propreté.'; errEl.classList.remove('hidden'); return; }
-
-  btn.disabled = true; btn.textContent = 'Envoi…';
-
-  const { error } = await supabase.from('toilets').insert({
-    name,
-    address,
-    comment: document.getElementById('add-comment').value.trim(),
+  const name = document.getElementById('add-name').value;
+  const address = document.getElementById('add-address').value;
+  const { error } = await supabase.from('toilets').insert([{
+    name, address, stars: addStars, photos: photoDataURLs, 
     type: document.getElementById('add-type').value,
     price: document.getElementById('add-price').value,
-    pmr: document.getElementById('add-pmr').value || null,
-    stars: addStars,
-    photos: photoDataURLs,
-    status: 'pending',
-    user_id: currentUser.id,
-    user_name: currentProfile?.name || 'Anonyme'
-  });
-
-  btn.disabled = false; btn.textContent = 'Soumettre';
-
-  if (error) { errEl.textContent = 'Erreur : ' + error.message; errEl.classList.remove('hidden'); return; }
-  closeModal('modal-add');
-  showToast('✅ Soumission envoyée — en attente de modération.');
-  renderFeed();
+    user_id: currentUser.id, user_name: currentProfile.name
+  }]);
+  if(error) alert(error.message); else { alert("Merci ! En attente de modération."); closeModal('modal-add'); }
 }
 
-// ============================================================
-// DETAIL
-// ============================================================
-async function openDetail(id) {
-  document.getElementById('detail-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">Chargement…</div>';
-  document.getElementById('modal-detail').classList.add('open');
-
-  const { data: t } = await supabase.from('toilets').select('*, reviews(*)').eq('id', id).single();
-  if (!t) return;
-
-  const avg = getAvgStars(t);
-  const alreadyReviewed = (t.reviews||[]).some(r => r.user_id === currentUser?.id);
-  const isOwner = t.user_id === currentUser?.id;
-  const canReview = currentUser && !alreadyReviewed && !isOwner;
-
-  let photosHTML = t.photos?.length
-    ? t.photos.map(p => `<img src="${escHtml(p)}" alt="">`).join('')
-    : '<div class="detail-photo-placeholder">🚽</div>';
-
-  document.getElementById('detail-content').innerHTML = `
-    <div class="modal-title">${escHtml(t.name)}</div>
-    <div class="detail-photos">${photosHTML}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-      <span class="badge ${t.type==='public'?'badge-pub':'badge-priv'}">${t.type==='public'?'Public':'Privé'}</span>
-      <span class="badge ${t.price==='gratuit'?'badge-free':'badge-pay'}">${t.price==='gratuit'?'Gratuit':'Payant'}</span>
-      ${t.pmr==='yes'?'<span class="badge badge-pmr">Accessible PMR ♿</span>':''}
-      ${t.pmr==='no'?'<span class="badge" style="background:var(--surface2);color:var(--text3)">Non accessible PMR</span>':''}
-    </div>
-    <div class="detail-meta">
-      <div class="detail-meta-item">
-        <div class="detail-meta-label">NOTE DE PROPRETÉ</div>
-        <div class="detail-meta-val">${starsHTML(avg)} <span style="font-size:13px;color:var(--text3)">${avg.toFixed(1)}/5</span></div>
-        <div class="clean-bar-wrap"><div class="clean-bar" style="width:${Math.round(avg/5*100)}%"></div></div>
-      </div>
-      <div class="detail-meta-item">
-        <div class="detail-meta-label">ADRESSE</div>
-        <div class="detail-meta-val" style="font-size:13px">${escHtml(t.address)}</div>
-      </div>
-    </div>
-    ${t.comment ? `<div class="detail-comment">"${escHtml(t.comment)}"</div>` : ''}
-    <div style="font-size:12px;color:var(--text3);margin-bottom:20px">
-      Ajouté par <strong>${escHtml(t.user_name||'?')}</strong> le ${new Date(t.created_at).toLocaleDateString('fr-FR')}
-    </div>
-
-    <div style="font-size:15px;font-weight:500;margin-bottom:12px">${(t.reviews||[]).length} avis de la communauté</div>
-    <div class="reviews-list">
-      ${(t.reviews||[]).length
-        ? (t.reviews||[]).map(r => `
-          <div class="review-item">
-            <div class="review-header">
-              <span class="review-user">${escHtml(r.user_name)} ${starsHTML(r.stars)}</span>
-              <span class="review-date">${new Date(r.created_at).toLocaleDateString('fr-FR')}</span>
-            </div>
-            <div class="review-text">${escHtml(r.text)}</div>
-          </div>`).join('')
-        : '<div style="font-size:13px;color:var(--text3)">Aucun avis pour l\'instant.</div>'
-      }
-    </div>
-
-    ${canReview ? `
-    <div class="add-review-form">
-      <div class="add-review-title">Laisser un avis</div>
-      <div class="form-group">
-        <label class="form-label">Note de propreté</label>
-        <div class="star-picker" id="review-stars-picker">
-          ${[1,2,3,4,5].map(v=>`<span class="star-pick" onclick="setReviewStar(${v})">★</span>`).join('')}
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Commentaire</label>
-        <textarea class="form-input" id="review-text" placeholder="Votre avis..."></textarea>
-      </div>
-      <button class="btn btn-primary" id="review-submit-btn" onclick="submitReview('${t.id}')">Publier mon avis</button>
-    </div>` : alreadyReviewed ? '<div style="font-size:12px;color:var(--text3);margin-top:16px;border-top:1px solid var(--border);padding-top:16px">✅ Vous avez déjà laissé un avis.</div>' : ''}
-  `;
-}
-
-function setReviewStar(val) {
-  reviewStarsVal = val;
-  document.querySelectorAll('#review-stars-picker .star-pick').forEach((s,i) => s.classList.toggle('lit', i<val));
-}
-
-async function submitReview(toiletId) {
-  const text = document.getElementById('review-text').value.trim();
-  const btn = document.getElementById('review-submit-btn');
-  if (!reviewStarsVal) { showToast('Choisissez une note.'); return; }
-  if (!text) { showToast('Ajoutez un commentaire.'); return; }
-
-  btn.disabled = true; btn.textContent = 'Envoi…';
-  const { error } = await supabase.from('reviews').insert({
-    toilet_id: toiletId,
-    user_id: currentUser.id,
-    user_name: currentProfile?.name || 'Anonyme',
-    stars: reviewStarsVal,
-    text
-  });
-  if (error) { showToast('Erreur : ' + error.message); btn.disabled = false; btn.textContent = 'Publier'; return; }
-  showToast('✅ Avis publié !');
-  closeModal('modal-detail');
-  renderFeed();
-}
-
-// ============================================================
-// MODERATION
-// ============================================================
-function showModTab(tab, el) {
-  modTab = tab;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderModeration();
-}
-
-async function renderModeration() {
-  const { data: pending } = await supabase.from('toilets').select('id').eq('status','pending');
-  document.getElementById('mod-count').textContent = `${pending?.length||0} en attente`;
-
-  const { data: toilets } = await supabase.from('toilets').select('*').eq('status', modTab).order('created_at', { ascending: false });
-  const list = document.getElementById('mod-list');
-
-  if (!toilets?.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>${modTab==='pending'?'Aucune soumission en attente.':'Aucun élément ici.'}</p></div>`;
-    return;
-  }
-
-  list.innerHTML = toilets.map(t => `
-    <div class="mod-card">
-      <div style="width:80px;height:80px;border-radius:var(--radius-sm);background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">
-        ${t.photos?.length ? `<img src="${escHtml(t.photos[0])}" style="width:100%;height:100%;object-fit:cover">` : '<span style="font-size:32px;opacity:.4">🚽</span>'}
-      </div>
-      <div class="mod-info">
-        <div class="mod-name">${escHtml(t.name)}</div>
-        <div class="mod-by">Par ${escHtml(t.user_name||'?')} · ${new Date(t.created_at).toLocaleDateString('fr-FR')}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
-          <span class="badge ${t.type==='public'?'badge-pub':'badge-priv'}">${t.type==='public'?'Public':'Privé'}</span>
-          <span class="badge ${t.price==='gratuit'?'badge-free':'badge-pay'}">${t.price==='gratuit'?'Gratuit':'Payant'}</span>
-          ${t.pmr==='yes'?'<span class="badge badge-pmr">PMR ♿</span>':''}
-          <span style="font-size:12px;color:var(--text3)">${starsHTML(t.stars)}</span>
-        </div>
-        ${t.comment?`<div style="font-size:12px;color:var(--text3);line-height:1.5">${escHtml(t.comment)}</div>`:''}
-        <div style="font-size:12px;color:var(--text3);margin-top:4px">📍 ${escHtml(t.address)}</div>
-      </div>
-      <div class="mod-actions">
-        ${modTab==='pending' ? `
-          <button class="btn btn-sm btn-primary" onclick="moderateToilet('${t.id}','approved')">✓ Approuver</button>
-          <button class="btn btn-sm btn-danger" onclick="moderateToilet('${t.id}','rejected')">✕ Rejeter</button>
-        ` : modTab==='approved' ? `
-          <button class="btn btn-sm btn-danger" onclick="moderateToilet('${t.id}','rejected')">Retirer</button>
-        ` : `
-          <button class="btn btn-sm btn-primary" onclick="moderateToilet('${t.id}','approved')">Réapprouver</button>
-          <button class="btn btn-sm btn-outline" onclick="deleteToilet('${t.id}')">Supprimer</button>
-        `}
-      </div>
-    </div>
-  `).join('');
-}
-
-async function moderateToilet(id, status) {
-  await supabase.from('toilets').update({ status }).eq('id', id);
-  showToast(status==='approved' ? '✅ Approuvé !' : '🚫 Rejeté.');
-  renderModeration();
-}
-
-async function deleteToilet(id) {
-  await supabase.from('toilets').delete().eq('id', id);
-  showToast('🗑️ Supprimé.');
-  renderModeration();
-}
-
-// ============================================================
-// UTILS
-// ============================================================
+function openAddModal() { document.getElementById('modal-add').classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function escHtml(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-document.querySelectorAll('.modal-bg').forEach(bg => {
-  bg.addEventListener('click', e => { if (e.target===bg) bg.classList.remove('open'); });
-});
-
-// ============================================================
-// BOOT
-// ============================================================
 boot();
 </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
+    authDomain: "flushr-ca973.firebaseapp.com",
+    projectId: "flushr-ca973",
+    storageBucket: "flushr-ca973.firebasestorage.app",
+    messagingSenderId: "637232955486",
+    appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf",
+    measurementId: "G-8JD8LF24ZP"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
 </body>
 </html>
