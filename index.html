@@ -1,223 +1,214 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FlushR — Multi-Auth</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FlushR — Lucien Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#F7F4EF; --accent:#2D6A4F; --text:#1A1A1A; --border:rgba(0,0,0,0.1); --radius:18px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        .hidden { display: none !important; }
+        
+        /* PAGES */
+        .page { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 100px; }
+        .auth-box { background: white; padding: 30px; border-radius: var(--radius); text-align: center; margin-top: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* INPUTS & BTNS */
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); font-size: 16px; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-main { background: var(--accent); color: white; margin-top: 10px; }
+        .btn-google { background: white; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; }
 
-<style>
-:root {
-  --bg:#F7F4EF; --surface:#fff; --accent:#2D6A4F; --text:#1A1A1A; --text2:#5C5C5C; --border:rgba(0,0,0,0.08); --radius:20px;
-}
-*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent;}
-body{font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden}
-.hidden { display: none !important; }
+        /* FEED & CARDS */
+        .cards-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+        .card { background: white; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
+        .tag { display: inline-block; padding: 4px 8px; background: var(--bg); border-radius: 6px; font-size: 11px; font-weight: 700; margin-top: 10px; }
 
-/* LAYOUT */
-nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100}
-.page{max-width:1000px; margin:0 auto; padding:16px 16px 100px 16px;}
-.cards-grid{display:grid; gap:16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-
-/* FORMS */
-.auth-container { max-width: 350px; margin: 40px auto; padding: 20px; text-align: center; }
-.input-group { margin-bottom: 12px; text-align: left; }
-input[type="email"], input[type="password"], input[type="text"] { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: white; font-size: 16px; margin-top: 5px; }
-.btn-primary{background:var(--accent); color:white; border:none; padding:14px; border-radius:12px; font-weight:700; width:100%; cursor:pointer; margin-top:10px}
-.btn-secondary { background: none; border: 1px solid var(--border); padding: 10px; width: 100%; border-radius: 12px; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-
-/* CARDS */
-.toilet-card{background:white; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; padding:15px}
-.amenity-tag { font-size: 11px; background: var(--bg); padding: 4px 8px; border-radius: 6px; margin-right:4px; display:inline-block}
-
-.mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; z-index: 150; }
-</style>
+        /* NAV */
+        nav { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); sticky; top: 0; z-index: 10; }
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 100; }
+        
+        .logo { font-family: 'Syne'; font-size: 22px; color: var(--accent); }
+    </style>
 </head>
 <body>
 
-<nav id="main-nav" class="hidden">
-  <div style="font-family:Syne; font-weight:800; color:var(--accent)">FlushR</div>
-  <div id="user-display" style="font-size:12px; color:var(--text2)"></div>
-</nav>
+    <nav id="navbar" class="hidden">
+        <div class="logo">FlushR</div>
+        <div id="user-mail" style="font-size: 11px; opacity: 0.6;"></div>
+    </nav>
 
-<!-- CONNEXION MULTIPLE -->
-<div id="page-login" class="page hidden">
-  <div class="auth-container">
-    <h1 style="font-family:Syne; font-size:40px; margin-bottom:10px">FlushR</h1>
-    <p style="color:gray; margin-bottom:30px; font-size:14px">L'app de Lucien.</p>
-    
-    <!-- Google Login -->
-    <button onclick="window.doGoogleLogin()" class="btn-secondary">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Continuer avec Google
-    </button>
-
-    <div style="margin: 20px 0; color: #ccc; display: flex; align-items: center; gap: 10px;">
-        <hr style="flex:1; border:0; border-top:1px solid #eee"> ou <hr style="flex:1; border:0; border-top:1px solid #eee">
-    </div>
-
-    <!-- Manual Login -->
-    <div id="manual-form">
-        <div class="input-group">
-            <input type="email" id="login-email" placeholder="Email">
+    <!-- 1. PAGE DE CONNEXION -->
+    <div id="page-login" class="page">
+        <div class="auth-box">
+            <h1 style="font-family: Syne; margin-bottom: 10px;">Bienvenue</h1>
+            <p style="font-size: 14px; color: gray; margin-bottom: 25px;">Connectez-vous pour trouver un trône.</p>
+            
+            <button class="btn btn-google" onclick="doGoogleLogin()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google
+            </button>
+            
+            <div style="margin-bottom: 15px; font-size: 12px; color: #ccc;">OU</div>
+            
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="pass" placeholder="Mot de passe">
+            <button class="btn btn-main" onclick="doManualAuth()">Connexion / Inscription</button>
         </div>
-        <div class="input-group">
-            <input type="password" id="login-pass" placeholder="Mot de passe">
+    </div>
+
+    <!-- 2. CONFIGURATION PROFIL (APRES LOGIN) -->
+    <div id="page-setup" class="page hidden">
+        <div class="auth-box">
+            <h2 style="font-family: Syne;">Réglages de Lucien</h2>
+            <p style="margin-bottom: 20px; font-size: 13px;">Ces filtres seront appliqués automatiquement.</p>
+            <label style="display: flex; justify-content: space-between; padding: 10px 0;">
+                <span>🆓 Uniquement Gratuit</span>
+                <input type="checkbox" id="pref-free" style="width: 20px;">
+            </label>
+            <label style="display: flex; justify-content: space-between; padding: 10px 0;">
+                <span>♿ Accès PMR requis</span>
+                <input type="checkbox" id="pref-pmr" style="width: 20px;">
+            </label>
+            <button class="btn btn-main" onclick="saveProfile()">Enregistrer et Entrer</button>
         </div>
-        <button class="btn-primary" onclick="window.doManualAuth()">Se connecter / S'inscrire</button>
-        <p style="font-size: 11px; color: gray; margin-top: 15px;">Si le compte n'existe pas, il sera créé automatiquement.</p>
     </div>
-  </div>
-</div>
 
-<!-- CONFIGURATION DU PROFIL -->
-<div id="page-setup" class="page hidden">
-    <div style="background:white; padding:30px; border-radius:24px; max-width:400px; margin: auto; border: 1px solid var(--border)">
-        <h2 style="font-family:Syne; margin-bottom:10px">Tes préférences</h2>
-        <div style="margin-bottom:20px; text-align:left">
-            <label style="display:flex; justify-content:space-between; margin-bottom:10px"><span>🆓 Uniquement Gratuit</span> <input type="checkbox" id="pref-free"></label>
-            <label style="display:flex; justify-content:space-between; margin-bottom:10px"><span>♿ Accès PMR</span> <input type="checkbox" id="pref-pmr"></label>
+    <!-- 3. FEED (L'APPLICATION) -->
+    <div id="page-feed" class="page hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-family: Syne;">À proximité</h2>
+            <button onclick="showPage('setup')" style="background: none; border: none; color: var(--accent); font-weight: bold;">⚙️ Filtres</button>
         </div>
-        <button class="btn-primary" onclick="window.saveProfile()">Valider mon profil</button>
+        <div id="cards-grid" class="cards-grid"></div>
     </div>
-</div>
 
-<!-- FIL D'ACTUALITÉ -->
-<div id="page-feed" class="hidden">
-  <div class="page">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
-        <h2 style="font-family:Syne">Toilettes proches</h2>
-        <span style="font-size:11px; color:var(--accent); font-weight:bold" onclick="showPage('setup')">⚙️ Filtres</span>
+    <!-- 4. MODAL AJOUT -->
+    <div id="modal-add" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:white; padding:25px; border-radius:20px; width:100%; max-width:400px;">
+            <h3 style="margin-bottom:15px;">Signaler un lieu</h3>
+            <input type="text" id="add-name" placeholder="Nom du lieu">
+            <input type="text" id="add-address" placeholder="Adresse ou Ville">
+            <select id="add-price"><option>Gratuit</option><option>Payant</option></select>
+            <div style="display: flex; gap: 10px; margin: 10px 0;">
+                <label><input type="checkbox" id="add-pmr"> ♿ PMR</label>
+            </div>
+            <button class="btn btn-main" onclick="submitToilet()">Publier</button>
+            <button class="btn" onclick="document.getElementById('modal-add').classList.add('hidden')" style="background:none;">Annuler</button>
+        </div>
     </div>
-    <div class="cards-grid" id="cards-grid"></div>
-  </div>
-</div>
 
-<!-- NAVIGATION BASSE -->
-<div class="mobile-nav hidden" id="mobile-menu">
-    <div onclick="renderFeed()" style="cursor:pointer">🏠</div>
-    <div onclick="document.getElementById('modal-add').classList.remove('hidden')" style="background:var(--accent); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer">+</div>
-    <div onclick="window.doLogout()" style="cursor:pointer">🚪</div>
-</div>
-
-<!-- MODAL AJOUT -->
-<div class="modal-bg hidden" id="modal-add" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; display:flex; align-items:center; justify-content:center" onclick="if(event.target==this) this.classList.add('hidden')">
-    <div style="background:white; padding:24px; border-radius:24px; width:90%; max-width:400px">
-      <h3>Ajouter un lieu</h3>
-      <input type="text" id="add-name" placeholder="Nom du lieu">
-      <input type="text" id="add-address" placeholder="Adresse">
-      <select id="add-price" style="width:100%; padding:10px; margin:10px 0"><option>Gratuit</option><option>Payant</option></select>
-      <button class="btn-primary" onclick="window.submitToilet()">Publier</button>
+    <div id="nav-bottom" class="nav-bottom hidden">
+        <div onclick="showPage('feed')">🏠</div>
+        <div onclick="document.getElementById('modal-add').classList.remove('hidden')" style="background:var(--accent); color:white; width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-25px; font-size:24px; border:5px solid var(--bg)">+</div>
+        <div onclick="doLogout()">🚪</div>
     </div>
-</div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
-    authDomain: "flushr-ca973.firebaseapp.com",
-    projectId: "flushr-ca973",
-    storageBucket: "flushr-ca973.firebasestorage.app",
-    messagingSenderId: "637232955486",
-    appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
+            authDomain: "flushr-ca973.firebaseapp.com",
+            projectId: "flushr-ca973",
+            storageBucket: "flushr-ca973.firebasestorage.app",
+            messagingSenderId: "637232955486",
+            appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf"
+        };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
-  let userPrefs = null;
+        let userPrefs = null;
 
-  // AUTH GOOGLE
-  window.doGoogleLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e){alert(e.message)} };
+        // NAVIGATION ENTRE PAGES
+        window.showPage = (p) => {
+            document.getElementById('page-login').classList.add('hidden');
+            document.getElementById('page-setup').classList.add('hidden');
+            document.getElementById('page-feed').classList.add('hidden');
+            document.getElementById('navbar').classList.toggle('hidden', p === 'login');
+            document.getElementById('nav-bottom').classList.toggle('hidden', p === 'login' || p === 'setup');
+            document.getElementById('page-' + p).classList.remove('hidden');
+            if(p === 'feed') renderFeed();
+        };
 
-  // AUTH MANUELLE (Connexion ou Création)
-  window.doManualAuth = async () => {
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-pass').value;
-    if(!email || !pass) return alert("Remplis les champs !");
-
-    try {
-        await signInWithEmailAndPassword(auth, email, pass);
-    } catch (error) {
-        if (error.code === 'auth/user-not-found') {
-            try {
-                await createUserWithEmailAndPassword(auth, email, pass);
-            } catch (e) { alert("Erreur création : " + e.message); }
-        } else {
-            alert("Erreur : " + error.message);
-        }
-    }
-  };
-
-  window.doLogout = () => signOut(auth);
-
-  window.saveProfile = async () => {
-    const prefs = {
-        onlyFree: document.getElementById('pref-free').checked,
-        onlyPMR: document.getElementById('pref-pmr').checked,
-        setupDone: true
-    };
-    await setDoc(doc(db, "users", auth.currentUser.uid), prefs);
-    userPrefs = prefs;
-    showPage('feed');
-  };
-
-  window.submitToilet = async () => {
-    const data = {
-        name: document.getElementById('add-name').value,
-        address: document.getElementById('add-address').value,
-        price: document.getElementById('add-price').value,
-        createdBy: auth.currentUser.email,
-        createdAt: new Date()
-    };
-    await addDoc(collection(db, "toilets"), data);
-    document.getElementById('modal-add').classList.add('hidden');
-    renderFeed();
-  };
-
-  async function renderFeed() {
-    const grid = document.getElementById('cards-grid');
-    grid.innerHTML = "Chargement...";
-    const snap = await getDocs(query(collection(db, "toilets"), orderBy("createdAt", "desc")));
-    grid.innerHTML = "";
-    
-    snap.forEach(doc => {
-        const t = doc.data();
-        if (userPrefs?.onlyFree && t.price !== 'Gratuit') return;
+        // AUTHENTIFICATION
+        window.doGoogleLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e){ alert(e.message); } };
         
-        const card = document.createElement('div');
-        card.className = 'toilet-card';
-        card.innerHTML = `<h3>${t.name}</h3><p>${t.address}</p><span class="amenity-tag">${t.price}</span>`;
-        grid.appendChild(card);
-    });
-  }
+        window.doManualAuth = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+                    try { await createUserWithEmailAndPassword(auth, email, pass); } catch(err) { alert(err.message); }
+                } else { alert(e.message); }
+            }
+        };
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        document.getElementById('user-display').innerText = user.email;
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists() && userDoc.data().setupDone) {
-            userPrefs = userDoc.data();
+        window.doLogout = () => signOut(auth);
+
+        // PROFIL & PREFERENCES
+        window.saveProfile = async () => {
+            userPrefs = { onlyFree: document.getElementById('pref-free').checked, onlyPMR: document.getElementById('pref-pmr').checked, setupDone: true };
+            await setDoc(doc(db, "users", auth.currentUser.uid), userPrefs);
             showPage('feed');
-        } else {
-            showPage('setup');
-        }
-    } else {
-        showPage('login');
-    }
-  });
+        };
 
-  function showPage(p) {
-    ['login', 'setup', 'feed'].forEach(id => document.getElementById('page-'+id).classList.add('hidden'));
-    document.getElementById('main-nav').classList.toggle('hidden', p === 'login');
-    document.getElementById('mobile-menu').classList.toggle('hidden', p !== 'feed');
-    document.getElementById('page-'+p).classList.remove('hidden');
-    if(p === 'feed') renderFeed();
-  }
-</script>
+        // ACTIONS DATA
+        window.submitToilet = async () => {
+            const name = document.getElementById('add-name').value;
+            if(!name) return alert("Nom requis");
+            await addDoc(collection(db, "toilets"), {
+                name, address: document.getElementById('add-address').value,
+                price: document.getElementById('add-price').value,
+                hasPMR: document.getElementById('add-pmr').checked,
+                createdAt: new Date()
+            });
+            document.getElementById('modal-add').classList.add('hidden');
+            renderFeed();
+        };
+
+        async function renderFeed() {
+            const grid = document.getElementById('cards-grid');
+            grid.innerHTML = "Chargement...";
+            const snap = await getDocs(query(collection(db, "toilets"), orderBy("createdAt", "desc")));
+            grid.innerHTML = "";
+            snap.forEach(doc => {
+                const t = doc.data();
+                // FILTRE AUTOMATIQUE
+                if(userPrefs?.onlyFree && t.price !== 'Gratuit') return;
+                if(userPrefs?.onlyPMR && !t.hasPMR) return;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${t.name}</h3><p style="font-size:12px; color:gray;">${t.address}</p>
+                                  <span class="tag">${t.price}</span> ${t.hasPMR ? '<span class="tag">♿ PMR</span>' : ''}`;
+                grid.appendChild(card);
+            });
+        }
+
+        // SURVEILLANCE CONNEXION
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('user-mail').innerText = user.email;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().setupDone) {
+                    userPrefs = userDoc.data();
+                    showPage('feed');
+                } else {
+                    showPage('setup');
+                }
+            } else {
+                showPage('login');
+            }
+        });
+    </script>
 </body>
 </html>
