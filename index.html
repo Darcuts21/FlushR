@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FlushR — Profil & Filtres</title>
+<title>FlushR — Multi-Auth</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -14,21 +14,22 @@
 body{font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden}
 .hidden { display: none !important; }
 
-/* UI ELEMENTS */
+/* LAYOUT */
 nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100}
-.page{max-width:1000px; margin:0 auto; padding:16px 100px 16px 16px;}
+.page{max-width:1000px; margin:0 auto; padding:16px 16px 100px 16px;}
 .cards-grid{display:grid; gap:16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.btn-primary{background:var(--accent); color:white; border:none; padding:14px; border-radius:12px; font-weight:700; width:100%; cursor:pointer}
+
+/* FORMS */
+.auth-container { max-width: 350px; margin: 40px auto; padding: 20px; text-align: center; }
+.input-group { margin-bottom: 12px; text-align: left; }
+input[type="email"], input[type="password"], input[type="text"] { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: white; font-size: 16px; margin-top: 5px; }
+.btn-primary{background:var(--accent); color:white; border:none; padding:14px; border-radius:12px; font-weight:700; width:100%; cursor:pointer; margin-top:10px}
+.btn-secondary { background: none; border: 1px solid var(--border); padding: 10px; width: 100%; border-radius: 12px; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
 /* CARDS */
 .toilet-card{background:white; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; padding:15px}
 .amenity-tag { font-size: 11px; background: var(--bg); padding: 4px 8px; border-radius: 6px; margin-right:4px; display:inline-block}
 
-/* PROFILE SETUP & SETTINGS */
-.setup-card { background: white; padding: 24px; border-radius: 24px; max-width: 400px; margin: 40px auto; text-align: center; border: 1px solid var(--border); }
-.pref-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 12px; margin-bottom: 8px; }
-
-/* NAVIGATION BASSE */
 .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; z-index: 150; }
 </style>
 </head>
@@ -39,23 +40,44 @@ nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12
   <div id="user-display" style="font-size:12px; color:var(--text2)"></div>
 </nav>
 
-<!-- CONNEXION -->
-<div id="page-login" class="page hidden" style="text-align:center; padding-top:100px">
-  <h1 style="font-family:Syne; font-size:40px">FlushR</h1>
-  <button onclick="window.doGoogleLogin()" class="btn-primary" style="max-width:250px; margin-top:20px">Se connecter avec Google</button>
+<!-- CONNEXION MULTIPLE -->
+<div id="page-login" class="page hidden">
+  <div class="auth-container">
+    <h1 style="font-family:Syne; font-size:40px; margin-bottom:10px">FlushR</h1>
+    <p style="color:gray; margin-bottom:30px; font-size:14px">L'app de Lucien.</p>
+    
+    <!-- Google Login -->
+    <button onclick="window.doGoogleLogin()" class="btn-secondary">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Continuer avec Google
+    </button>
+
+    <div style="margin: 20px 0; color: #ccc; display: flex; align-items: center; gap: 10px;">
+        <hr style="flex:1; border:0; border-top:1px solid #eee"> ou <hr style="flex:1; border:0; border-top:1px solid #eee">
+    </div>
+
+    <!-- Manual Login -->
+    <div id="manual-form">
+        <div class="input-group">
+            <input type="email" id="login-email" placeholder="Email">
+        </div>
+        <div class="input-group">
+            <input type="password" id="login-pass" placeholder="Mot de passe">
+        </div>
+        <button class="btn-primary" onclick="window.doManualAuth()">Se connecter / S'inscrire</button>
+        <p style="font-size: 11px; color: gray; margin-top: 15px;">Si le compte n'existe pas, il sera créé automatiquement.</p>
+    </div>
+  </div>
 </div>
 
-<!-- CONFIGURATION INITIALE DU PROFIL -->
+<!-- CONFIGURATION DU PROFIL -->
 <div id="page-setup" class="page hidden">
-    <div class="setup-card">
-        <h2 style="font-family:Syne">Bienvenue !</h2>
-        <p style="font-size:14px; color:gray; margin-bottom:20px">Configure tes préférences pour un filtrage automatique.</p>
-        <div id="setup-options">
-            <label class="pref-item"><span>🆓 Uniquement Gratuit</span> <input type="checkbox" id="pref-free"></label>
-            <label class="pref-item"><span>♿ Accès PMR requis</span> <input type="checkbox" id="pref-pmr"></label>
-            <label class="pref-item"><span>✨ Toujours Nickel</span> <input type="checkbox" id="pref-clean"></label>
+    <div style="background:white; padding:30px; border-radius:24px; max-width:400px; margin: auto; border: 1px solid var(--border)">
+        <h2 style="font-family:Syne; margin-bottom:10px">Tes préférences</h2>
+        <div style="margin-bottom:20px; text-align:left">
+            <label style="display:flex; justify-content:space-between; margin-bottom:10px"><span>🆓 Uniquement Gratuit</span> <input type="checkbox" id="pref-free"></label>
+            <label style="display:flex; justify-content:space-between; margin-bottom:10px"><span>♿ Accès PMR</span> <input type="checkbox" id="pref-pmr"></label>
         </div>
-        <button class="btn-primary" onclick="window.saveProfile()">Terminer la configuration</button>
+        <button class="btn-primary" onclick="window.saveProfile()">Valider mon profil</button>
     </div>
 </div>
 
@@ -63,41 +85,34 @@ nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12
 <div id="page-feed" class="hidden">
   <div class="page">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
-        <h2 style="font-family:Syne">Pour vous</h2>
-        <span style="font-size:11px; color:var(--accent); font-weight:bold" onclick="showPage('setup')">⚙️ Mes réglages</span>
+        <h2 style="font-family:Syne">Toilettes proches</h2>
+        <span style="font-size:11px; color:var(--accent); font-weight:bold" onclick="showPage('setup')">⚙️ Filtres</span>
     </div>
-    <div id="filter-info" style="font-size:12px; color:gray; margin-bottom:15px"></div>
     <div class="cards-grid" id="cards-grid"></div>
   </div>
 </div>
 
-<!-- MODAL AJOUT -->
-<div class="modal-bg hidden" id="modal-add" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; display:flex; align-items:center; justify-content:center" onclick="if(event.target==this) this.classList.add('hidden')">
-  <div style="background:white; padding:24px; border-radius:24px; width:90%; max-width:450px">
-    <h3 style="margin-bottom:15px">Ajouter un lieu</h3>
-    <input type="text" id="add-name" placeholder="Nom" style="width:100%; padding:10px; margin-bottom:10px">
-    <input type="text" id="add-address" placeholder="Adresse" style="width:100%; padding:10px; margin-bottom:10px">
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px">
-        <select id="add-price"><option>Gratuit</option><option>Payant</option></select>
-        <select id="add-clean"><option>✨ Nickel</option><option>OK</option><option>⚠️ Sale</option></select>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-size:12px">
-        <label><input type="checkbox" id="check-pmr"> ♿ PMR</label>
-        <label><input type="checkbox" id="check-paper"> 🧻 Papier</label>
-    </div>
-    <button class="btn-primary" onclick="window.submitToilet()" style="margin-top:15px">Publier</button>
-  </div>
+<!-- NAVIGATION BASSE -->
+<div class="mobile-nav hidden" id="mobile-menu">
+    <div onclick="renderFeed()" style="cursor:pointer">🏠</div>
+    <div onclick="document.getElementById('modal-add').classList.remove('hidden')" style="background:var(--accent); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer">+</div>
+    <div onclick="window.doLogout()" style="cursor:pointer">🚪</div>
 </div>
 
-<div class="mobile-nav hidden" id="mobile-menu">
-    <div onclick="renderFeed()">🏠</div>
-    <div onclick="document.getElementById('modal-add').classList.remove('hidden')" style="background:var(--accent); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center">+</div>
-    <div onclick="window.doLogout()">🚪</div>
+<!-- MODAL AJOUT -->
+<div class="modal-bg hidden" id="modal-add" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; display:flex; align-items:center; justify-content:center" onclick="if(event.target==this) this.classList.add('hidden')">
+    <div style="background:white; padding:24px; border-radius:24px; width:90%; max-width:400px">
+      <h3>Ajouter un lieu</h3>
+      <input type="text" id="add-name" placeholder="Nom du lieu">
+      <input type="text" id="add-address" placeholder="Adresse">
+      <select id="add-price" style="width:100%; padding:10px; margin:10px 0"><option>Gratuit</option><option>Payant</option></select>
+      <button class="btn-primary" onclick="window.submitToilet()">Publier</button>
+    </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -116,15 +131,34 @@ nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12
 
   let userPrefs = null;
 
+  // AUTH GOOGLE
   window.doGoogleLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e){alert(e.message)} };
+
+  // AUTH MANUELLE (Connexion ou Création)
+  window.doManualAuth = async () => {
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+    if(!email || !pass) return alert("Remplis les champs !");
+
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+    } catch (error) {
+        if (error.code === 'auth/user-not-found') {
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+            } catch (e) { alert("Erreur création : " + e.message); }
+        } else {
+            alert("Erreur : " + error.message);
+        }
+    }
+  };
+
   window.doLogout = () => signOut(auth);
 
-  // SAUVEGARDE DU PROFIL
   window.saveProfile = async () => {
     const prefs = {
         onlyFree: document.getElementById('pref-free').checked,
         onlyPMR: document.getElementById('pref-pmr').checked,
-        onlyClean: document.getElementById('pref-clean').checked,
         setupDone: true
     };
     await setDoc(doc(db, "users", auth.currentUser.uid), prefs);
@@ -137,9 +171,7 @@ nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12
         name: document.getElementById('add-name').value,
         address: document.getElementById('add-address').value,
         price: document.getElementById('add-price').value,
-        clean: document.getElementById('add-clean').value,
-        hasPMR: document.getElementById('check-pmr').checked,
-        createdBy: auth.currentUser.displayName,
+        createdBy: auth.currentUser.email,
         createdAt: new Date()
     };
     await addDoc(collection(db, "toilets"), data);
@@ -153,36 +185,20 @@ nav{background:var(--surface); border-bottom:1px solid var(--border); padding:12
     const snap = await getDocs(query(collection(db, "toilets"), orderBy("createdAt", "desc")));
     grid.innerHTML = "";
     
-    let count = 0;
     snap.forEach(doc => {
         const t = doc.data();
+        if (userPrefs?.onlyFree && t.price !== 'Gratuit') return;
         
-        // LOGIQUE DE FILTRAGE AUTOMATIQUE SELON LE PROFIL
-        if (userPrefs.onlyFree && t.price !== 'Gratuit') return;
-        if (userPrefs.onlyPMR && !t.hasPMR) return;
-        if (userPrefs.onlyClean && t.clean !== '✨ Nickel') return;
-
-        count++;
         const card = document.createElement('div');
         card.className = 'toilet-card';
-        card.innerHTML = `
-            <span class="amenity-tag">${t.price}</span>
-            <h3 style="margin:8px 0">${t.name}</h3>
-            <p style="font-size:12px; color:gray">📍 ${t.address}</p>
-            <div style="margin-top:10px">
-                ${t.hasPMR ? '<span class="amenity-tag">♿ PMR</span>' : ''}
-                <span class="amenity-tag">${t.clean}</span>
-            </div>
-        `;
+        card.innerHTML = `<h3>${t.name}</h3><p>${t.address}</p><span class="amenity-tag">${t.price}</span>`;
         grid.appendChild(card);
     });
-
-    document.getElementById('filter-info').innerText = `${count} lieux correspondent à vos préférences.`;
   }
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-        document.getElementById('user-display').innerText = user.displayName;
+        document.getElementById('user-display').innerText = user.email;
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists() && userDoc.data().setupDone) {
             userPrefs = userDoc.data();
