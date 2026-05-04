@@ -1,214 +1,1207 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FlushR — Lucien Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg:#F7F4EF; --accent:#2D6A4F; --text:#1A1A1A; --border:rgba(0,0,0,0.1); --radius:18px; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
-        .hidden { display: none !important; }
-        
-        /* PAGES */
-        .page { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 100px; }
-        .auth-box { background: white; padding: 30px; border-radius: var(--radius); text-align: center; margin-top: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
-        /* INPUTS & BTNS */
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); font-size: 16px; }
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-main { background: var(--accent); color: white; margin-top: 10px; }
-        .btn-google { background: white; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FlushR — Trouvez votre trône</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F0EA;
+    --surface: #FFFFFF;
+    --accent: #1B6B45;
+    --accent-light: #D4EDE1;
+    --accent2: #F5A623;
+    --text: #111111;
+    --text-muted: #7A7A7A;
+    --border: rgba(0,0,0,0.08);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.07);
+    --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+    --nav-h: 62px;
+    --bottom-h: 72px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; font-size: 15px; }
+  .hidden { display: none !important; }
 
-        /* FEED & CARDS */
-        .cards-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-        .card { background: white; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
-        .tag { display: inline-block; padding: 4px 8px; background: var(--bg); border-radius: 6px; font-size: 11px; font-weight: 700; margin-top: 10px; }
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
-        /* NAV */
-        nav { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); sticky; top: 0; z-index: 10; }
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 100; }
-        
-        .logo { font-family: 'Syne'; font-size: 22px; color: var(--accent); }
-    </style>
+  /* ===== NAV ===== */
+  .topnav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 18px;
+    justify-content: space-between; z-index: 200;
+    backdrop-filter: blur(12px); background: rgba(255,255,255,0.92);
+  }
+  .topnav-logo { font-family: var(--font-display); font-size: 24px; color: var(--accent); letter-spacing: -0.5px; }
+  .topnav-logo span { color: var(--accent2); }
+  .topnav-right { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--accent); cursor: pointer; border: 2px solid var(--accent-light);
+  }
+  .notif-btn {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative;
+    font-size: 16px;
+  }
+  .notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: #E84040; border-radius: 50%; border: 1px solid white; }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottomnav {
+    position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-h);
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border); z-index: 200;
+    display: flex; align-items: center; justify-content: space-around; padding: 0 10px 8px;
+  }
+  .bnav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer; padding: 8px 14px; border-radius: 14px;
+    transition: all 0.2s; flex: 1; max-width: 70px;
+  }
+  .bnav-item .icon { font-size: 20px; transition: transform 0.2s; }
+  .bnav-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
+  .bnav-item.active .label { color: var(--accent); }
+  .bnav-item:active .icon { transform: scale(0.85); }
+  .bnav-add {
+    width: 52px; height: 52px; border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent), #2A9D5A);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: white; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(27,107,69,0.4);
+    transition: all 0.2s; margin-bottom: 4px; flex-shrink: 0;
+  }
+  .bnav-add:active { transform: scale(0.92); box-shadow: 0 3px 10px rgba(27,107,69,0.3); }
+
+  /* ===== PAGES ===== */
+  .page {
+    min-height: 100vh;
+    padding: calc(var(--nav-h) + 16px) 16px calc(var(--bottom-h) + 16px);
+  }
+  .page-full { min-height: 100vh; padding: 0; }
+
+  /* ===== AUTH ===== */
+  .auth-wrap {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; background: linear-gradient(160deg, #1B6B45 0%, #0d3e27 60%), url('');
+    position: relative; overflow: hidden;
+  }
+  .auth-bg-shapes { position: absolute; inset: 0; pointer-events: none; }
+  .auth-bg-shapes::before {
+    content: ''; position: absolute; top: -100px; right: -80px;
+    width: 350px; height: 350px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .auth-bg-shapes::after {
+    content: ''; position: absolute; bottom: -80px; left: -60px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: rgba(245,166,35,0.08);
+  }
+  .auth-card {
+    background: white; border-radius: 28px; padding: 32px 28px;
+    width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); z-index: 1;
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes slideUp { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform: translateY(0); } }
+  .auth-logo { font-family: var(--font-display); font-size: 38px; color: var(--accent); margin-bottom: 4px; }
+  .auth-logo span { color: var(--accent2); }
+  .auth-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+  .auth-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
+  .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .auth-divider span { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
+  /* ===== INPUTS ===== */
+  .input-group { margin-bottom: 12px; }
+  .input-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+  input[type=text], input[type=email], input[type=password], select, textarea {
+    width: 100%; padding: 13px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); font-size: 15px; font-family: var(--font-body);
+    background: var(--bg); color: var(--text); transition: border-color 0.2s;
+    outline: none; appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); background: white; }
+  textarea { resize: none; min-height: 80px; }
+
+  /* ===== BUTTONS ===== */
+  .btn { width: 100%; padding: 14px; border-radius: var(--radius-sm); border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); font-size: 15px; }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #2A9D5A); color: white; box-shadow: 0 4px 16px rgba(27,107,69,0.3); }
+  .btn-primary:hover { box-shadow: 0 6px 22px rgba(27,107,69,0.4); }
+  .btn-google { background: white; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; border-radius: 10px; }
+  .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 12px; background: var(--bg); border: none; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all 0.2s; }
+  .btn-icon:active { background: var(--accent-light); }
+
+  /* ===== SEARCH BAR ===== */
+  .search-wrap { position: relative; margin-bottom: 18px; }
+  .search-input {
+    width: 100%; padding: 13px 16px 13px 44px;
+    border-radius: var(--radius); border: 1.5px solid var(--border);
+    font-size: 15px; background: white; outline: none;
+    font-family: var(--font-body); transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow);
+  }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 4px 20px rgba(27,107,69,0.1); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none; }
+  .search-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); cursor: pointer; display: none; }
+
+  /* ===== FILTER CHIPS ===== */
+  .chips-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: none; }
+  .chips-row::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0; padding: 7px 14px; border-radius: 40px;
+    border: 1.5px solid var(--border); background: white; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    color: var(--text-muted);
+  }
+  .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .chip:active { transform: scale(0.95); }
+
+  /* ===== SORT BAR ===== */
+  .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .sort-bar .count { font-size: 13px; color: var(--text-muted); }
+  .sort-select { background: white; border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; font-family: var(--font-body); color: var(--text); cursor: pointer; width: auto; }
+
+  /* ===== CARDS ===== */
+  .cards-list { display: flex; flex-direction: column; gap: 14px; }
+  .toilet-card {
+    background: white; border-radius: var(--radius); overflow: hidden;
+    border: 1px solid var(--border); transition: all 0.25s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04); cursor: pointer;
+    animation: fadeInUp 0.3s ease both;
+  }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .toilet-card:active { transform: scale(0.99); box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+  .card-header { display: flex; gap: 14px; padding: 16px 16px 12px; }
+  .card-thumb {
+    width: 80px; height: 80px; border-radius: 14px; background: var(--accent-light);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 32px;
+    position: relative; overflow: hidden;
+  }
+  .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .card-info { flex: 1; min-width: 0; }
+  .card-name { font-weight: 700; font-size: 16px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-address { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .card-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .stars { color: var(--accent2); font-size: 13px; }
+  .rating-count { font-size: 11px; color: var(--text-muted); }
+  .card-distance { font-size: 11px; color: var(--text-muted); margin-left: auto; font-weight: 500; }
+  .card-tags { display: flex; gap: 6px; padding: 0 16px 14px; flex-wrap: wrap; }
+  .tag {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    background: var(--bg); color: var(--text-muted);
+  }
+  .tag.free { background: #D4EDE1; color: #1B6B45; }
+  .tag.paid { background: #FFECD4; color: #C47A00; }
+  .tag.pmr { background: #DCE8FF; color: #2B5CC5; }
+  .tag.open { background: #D4EDE1; color: #1B6B45; }
+  .tag.closed { background: #FFE0E0; color: #C42B2B; }
+  .card-actions { display: flex; border-top: 1px solid var(--border); }
+  .card-action-btn {
+    flex: 1; padding: 11px 8px; background: none; border: none;
+    font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: background 0.2s; font-family: var(--font-body);
+    border-right: 1px solid var(--border);
+  }
+  .card-action-btn:last-child { border-right: none; }
+  .card-action-btn:active { background: var(--bg); }
+  .card-action-btn.liked { color: #E84040; }
+
+  /* ===== HERO BANNER ===== */
+  .feed-hero {
+    background: linear-gradient(135deg, var(--accent) 0%, #2A9D5A 100%);
+    border-radius: var(--radius); padding: 22px 20px; margin-bottom: 18px;
+    position: relative; overflow: hidden;
+  }
+  .feed-hero::after { content: '🚽'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 52px; opacity: 0.18; }
+  .feed-hero h2 { font-family: var(--font-display); font-size: 20px; color: white; margin-bottom: 4px; }
+  .feed-hero p { font-size: 13px; color: rgba(255,255,255,0.75); }
+  .feed-hero-stats { display: flex; gap: 18px; margin-top: 14px; }
+  .fhstat { text-align: left; }
+  .fhstat .n { font-family: var(--font-display); font-size: 22px; color: white; }
+  .fhstat .l { font-size: 10px; color: rgba(255,255,255,0.65); text-transform: uppercase; font-weight: 600; }
+
+  /* ===== SECTION TITLES ===== */
+  .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .section-title { font-family: var(--font-display); font-size: 18px; }
+  .section-link { font-size: 12px; color: var(--accent); font-weight: 700; cursor: pointer; }
+
+  /* ===== FEATURED HORIZONTAL SCROLL ===== */
+  .featured-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; margin-bottom: 22px; }
+  .featured-scroll::-webkit-scrollbar { display: none; }
+  .featured-card {
+    flex-shrink: 0; width: 170px; border-radius: var(--radius); background: white;
+    border: 1px solid var(--border); overflow: hidden; cursor: pointer;
+    transition: transform 0.2s; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .featured-card:active { transform: scale(0.96); }
+  .featured-thumb { width: 100%; height: 90px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 36px; }
+  .featured-info { padding: 10px 12px; }
+  .featured-name { font-weight: 700; font-size: 13px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .featured-sub { font-size: 11px; color: var(--text-muted); }
+  .featured-stars { font-size: 11px; color: var(--accent2); }
+
+  /* ===== DETAIL PAGE ===== */
+  .detail-hero {
+    width: 100%; height: 220px; background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center; font-size: 72px;
+    position: relative;
+  }
+  .detail-back {
+    position: absolute; top: calc(var(--nav-h) + 12px); left: 14px;
+    width: 38px; height: 38px; background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer; box-shadow: var(--shadow); z-index: 10;
+  }
+  .detail-body { padding: 20px 16px; }
+  .detail-name { font-family: var(--font-display); font-size: 24px; margin-bottom: 4px; }
+  .detail-address { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+  .detail-rating-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .big-rating { font-family: var(--font-display); font-size: 44px; color: var(--accent); line-height: 1; }
+  .rating-breakdown { flex: 1; }
+  .rating-bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .rating-bar-label { font-size: 10px; width: 12px; text-align: right; color: var(--text-muted); }
+  .rating-bar-bg { flex: 1; height: 5px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .rating-bar-fill { height: 100%; background: var(--accent2); border-radius: 4px; }
+  .detail-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .info-block { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; }
+  .info-block .ib-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+  .info-block .ib-val { font-size: 16px; font-weight: 700; }
+  .detail-actions { display: flex; gap: 10px; margin-bottom: 20px; }
+  .detail-actions .btn { flex: 1; }
+
+  /* ===== REVIEWS ===== */
+  .reviews-section { margin-top: 4px; }
+  .reviews-title { font-family: var(--font-display); font-size: 17px; margin-bottom: 14px; }
+  .review-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; }
+  .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .review-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  .review-author { font-weight: 700; font-size: 13px; }
+  .review-date { font-size: 11px; color: var(--text-muted); }
+  .review-stars { color: var(--accent2); font-size: 12px; }
+  .review-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .add-review-form { background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px; }
+  .add-review-form h4 { font-family: var(--font-display); font-size: 15px; margin-bottom: 12px; }
+  .star-picker { display: flex; gap: 6px; margin-bottom: 10px; }
+  .star-btn { font-size: 22px; cursor: pointer; transition: transform 0.1s; }
+  .star-btn:active { transform: scale(0.85); }
+
+  /* ===== MAP PAGE ===== */
+  .map-placeholder {
+    width: 100%; height: calc(100vh - var(--nav-h) - var(--bottom-h));
+    background: linear-gradient(160deg, #e8f4ec 0%, #d0e8d8 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 52px; position: relative; overflow: hidden;
+  }
+  .map-placeholder p { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-weight: 500; }
+  .map-pin-container { position: absolute; inset: 0; pointer-events: none; }
+  .map-pin { position: absolute; font-size: 22px; animation: float 3s ease-in-out infinite; cursor: pointer; pointer-events: all; transition: transform 0.2s; }
+  .map-pin:active { transform: scale(1.3); }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .map-pin-label { position: absolute; background: white; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; top: -24px; left: 50%; transform: translateX(-50%); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+  /* ===== PROFILE ===== */
+  .profile-header { text-align: center; padding: 24px 16px 20px; }
+  .profile-avatar-big { width: 76px; height: 76px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; color: var(--accent); margin: 0 auto 10px; border: 3px solid var(--accent); }
+  .profile-name { font-family: var(--font-display); font-size: 20px; }
+  .profile-mail { font-size: 12px; color: var(--text-muted); }
+  .profile-stats { display: flex; justify-content: center; gap: 24px; padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 14px 0; }
+  .pstat { text-align: center; }
+  .pstat .n { font-family: var(--font-display); font-size: 22px; color: var(--accent); }
+  .pstat .l { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .settings-list { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-bottom: 12px; }
+  .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+  .settings-item:last-child { border-bottom: none; }
+  .settings-item:active { background: var(--bg); }
+  .settings-item-left { display: flex; align-items: center; gap: 12px; }
+  .settings-item-icon { font-size: 20px; }
+  .settings-item-label { font-size: 14px; font-weight: 500; }
+  .settings-item-sub { font-size: 11px; color: var(--text-muted); }
+  .toggle { width: 42px; height: 24px; border-radius: 12px; background: #ddd; position: relative; cursor: pointer; transition: background 0.2s; }
+  .toggle.on { background: var(--accent); }
+  .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on::after { left: 21px; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 300; display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px); }
+  .modal-sheet { background: white; border-radius: 24px 24px 0 0; padding: 28px 20px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; animation: sheetUp 0.3s cubic-bezier(0.34,1.3,0.64,1); }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 36px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: var(--font-display); font-size: 20px; margin-bottom: 18px; }
+
+  /* ===== UPLOAD ===== */
+  .upload-area { border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg); }
+  .upload-area:active { border-color: var(--accent); background: var(--accent-light); }
+  .upload-area .upload-icon { font-size: 28px; margin-bottom: 6px; }
+  .upload-area p { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed; bottom: calc(var(--bottom-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1A1A1A; color: white; padding: 11px 20px; border-radius: 40px;
+    font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transition: all 0.3s;
+    white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ===== LOADING ===== */
+  .loading-spinner { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 12px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--text-muted); }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state { text-align: center; padding: 50px 20px; }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state h3 { font-family: var(--font-display); font-size: 18px; margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; color: var(--text-muted); }
+
+  /* ===== UTILITY ===== */
+  .mt-10 { margin-top: 10px; }
+  .mt-14 { margin-top: 14px; }
+  .flex-row { display: flex; gap: 10px; }
+  .flex-row > * { flex: 1; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (min-width: 600px) {
+    .cards-list { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .featured-card { width: 200px; }
+    .detail-hero { height: 280px; }
+  }
+  @media (min-width: 900px) {
+    .cards-list { grid-template-columns: repeat(3, 1fr); }
+    .page { padding-left: max(16px, calc(50vw - 440px)); padding-right: max(16px, calc(50vw - 440px)); }
+    .modal-sheet { border-radius: 24px; margin-bottom: 40px; }
+  }
+
+  /* ===== BADGE ===== */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-green { background: #D4EDE1; color: #1B6B45; }
+  .badge-orange { background: #FFF0D4; color: #C47A00; }
+  .badge-red { background: #FFE0E0; color: #C42B2B; }
+
+  /* ===== RANKING ===== */
+  .rank-num { font-family: var(--font-display); font-size: 12px; color: var(--text-muted); margin-right: 6px; }
+
+</style>
 </head>
 <body>
 
-    <nav id="navbar" class="hidden">
-        <div class="logo">FlushR</div>
-        <div id="user-mail" style="font-size: 11px; opacity: 0.6;"></div>
-    </nav>
+<!-- TOP NAV -->
+<nav id="topnav" class="topnav hidden">
+  <div class="topnav-logo">Flush<span>R</span></div>
+  <div class="topnav-right">
+    <div class="notif-btn" id="notif-btn">🔔<span class="notif-dot" id="notif-dot"></span></div>
+    <div class="avatar" id="avatar-btn" onclick="showTab('profile')">?</div>
+  </div>
+</nav>
 
-    <!-- 1. PAGE DE CONNEXION -->
-    <div id="page-login" class="page">
-        <div class="auth-box">
-            <h1 style="font-family: Syne; margin-bottom: 10px;">Bienvenue</h1>
-            <p style="font-size: 14px; color: gray; margin-bottom: 25px;">Connectez-vous pour trouver un trône.</p>
-            
-            <button class="btn btn-google" onclick="doGoogleLogin()">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google
-            </button>
-            
-            <div style="margin-bottom: 15px; font-size: 12px; color: #ccc;">OU</div>
-            
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="pass" placeholder="Mot de passe">
-            <button class="btn btn-main" onclick="doManualAuth()">Connexion / Inscription</button>
+<!-- BOTTOM NAV -->
+<div id="bottomnav" class="bottomnav hidden">
+  <div class="bnav-item active" id="tab-feed" onclick="showTab('feed')">
+    <span class="icon">🏠</span><span class="label">Accueil</span>
+  </div>
+  <div class="bnav-item" id="tab-map" onclick="showTab('map')">
+    <span class="icon">🗺️</span><span class="label">Carte</span>
+  </div>
+  <div class="bnav-add" onclick="openModal('add')">+</div>
+  <div class="bnav-item" id="tab-top" onclick="showTab('top')">
+    <span class="icon">🏆</span><span class="label">Top</span>
+  </div>
+  <div class="bnav-item" id="tab-profile" onclick="showTab('profile')">
+    <span class="icon">👤</span><span class="label">Profil</span>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- ==================== AUTH PAGE ==================== -->
+<div id="page-auth" class="page-full">
+  <div class="auth-wrap">
+    <div class="auth-bg-shapes"></div>
+    <div style="text-align:center; z-index:1; margin-bottom: 24px;">
+      <div style="font-size:54px; margin-bottom: 6px;">🚽</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-logo">Flush<span>R</span></div>
+      <div class="auth-tagline">Trouvez votre trône, partout en France</div>
+      <button class="btn btn-google" onclick="doGoogleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Continuer avec Google
+      </button>
+      <div class="auth-divider"><span>OU</span></div>
+      <div class="input-group">
+        <label class="input-label">Email</label>
+        <input type="email" id="auth-email" placeholder="votre@email.com">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Mot de passe</label>
+        <input type="password" id="auth-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary mt-10" onclick="doManualAuth()">Connexion / Inscription</button>
+    </div>
+    <div style="margin-top:20px; font-size:11px; color:rgba(255,255,255,0.5); z-index:1; text-align:center;">
+      En continuant, vous acceptez nos conditions d'utilisation.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SETUP PAGE ==================== -->
+<div id="page-setup" class="page-full hidden">
+  <div class="auth-wrap" style="background: linear-gradient(160deg, #0d3e27, #1B6B45);">
+    <div class="auth-bg-shapes"></div>
+    <div class="auth-card">
+      <div style="font-size: 36px; margin-bottom: 8px;">⚙️</div>
+      <h2 style="font-family: var(--font-display); font-size: 22px; margin-bottom: 6px;">Vos préférences</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Nous filtrerons les résultats automatiquement.</p>
+      <div class="settings-list">
+        <div class="settings-item" onclick="toggleSetup('free')">
+          <div class="settings-item-left">
+            <span class="settings-item-icon">🆓</span>
+            <div><div class="settings-item-label">Uniquement Gratuit</div><div class="settings-item-sub">Masquer les toilettes payantes</div></div>
+          </div>
+          <div class="toggle" id="setup-free"></div>
         </div>
-    </div>
-
-    <!-- 2. CONFIGURATION PROFIL (APRES LOGIN) -->
-    <div id="page-setup" class="page hidden">
-        <div class="auth-box">
-            <h2 style="font-family: Syne;">Réglages de Lucien</h2>
-            <p style="margin-bottom: 20px; font-size: 13px;">Ces filtres seront appliqués automatiquement.</p>
-            <label style="display: flex; justify-content: space-between; padding: 10px 0;">
-                <span>🆓 Uniquement Gratuit</span>
-                <input type="checkbox" id="pref-free" style="width: 20px;">
-            </label>
-            <label style="display: flex; justify-content: space-between; padding: 10px 0;">
-                <span>♿ Accès PMR requis</span>
-                <input type="checkbox" id="pref-pmr" style="width: 20px;">
-            </label>
-            <button class="btn btn-main" onclick="saveProfile()">Enregistrer et Entrer</button>
+        <div class="settings-item" onclick="toggleSetup('pmr')">
+          <div class="settings-item-left">
+            <span class="settings-item-icon">♿</span>
+            <div><div class="settings-item-label">Accès PMR</div><div class="settings-item-sub">Accessibilité requise</div></div>
+          </div>
+          <div class="toggle" id="setup-pmr"></div>
         </div>
-    </div>
-
-    <!-- 3. FEED (L'APPLICATION) -->
-    <div id="page-feed" class="page hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="font-family: Syne;">À proximité</h2>
-            <button onclick="showPage('setup')" style="background: none; border: none; color: var(--accent); font-weight: bold;">⚙️ Filtres</button>
+        <div class="settings-item" onclick="toggleSetup('open')">
+          <div class="settings-item-left">
+            <span class="settings-item-icon">🕐</span>
+            <div><div class="settings-item-label">Ouverts maintenant</div><div class="settings-item-sub">Afficher uniquement les ouverts</div></div>
+          </div>
+          <div class="toggle" id="setup-open"></div>
         </div>
-        <div id="cards-grid" class="cards-grid"></div>
+      </div>
+      <button class="btn btn-primary mt-14" onclick="saveProfile()">Commencer à explorer 🚀</button>
     </div>
+  </div>
+</div>
 
-    <!-- 4. MODAL AJOUT -->
-    <div id="modal-add" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px;">
-        <div style="background:white; padding:25px; border-radius:20px; width:100%; max-width:400px;">
-            <h3 style="margin-bottom:15px;">Signaler un lieu</h3>
-            <input type="text" id="add-name" placeholder="Nom du lieu">
-            <input type="text" id="add-address" placeholder="Adresse ou Ville">
-            <select id="add-price"><option>Gratuit</option><option>Payant</option></select>
-            <div style="display: flex; gap: 10px; margin: 10px 0;">
-                <label><input type="checkbox" id="add-pmr"> ♿ PMR</label>
-            </div>
-            <button class="btn btn-main" onclick="submitToilet()">Publier</button>
-            <button class="btn" onclick="document.getElementById('modal-add').classList.add('hidden')" style="background:none;">Annuler</button>
+<!-- ==================== FEED PAGE ==================== -->
+<div id="page-feed" class="page hidden">
+
+  <div class="feed-hero">
+    <h2>Bonjour ! 👋</h2>
+    <p id="hero-subtitle">Trouver les meilleurs endroits à proximité</p>
+    <div class="feed-hero-stats">
+      <div class="fhstat"><div class="n" id="stat-total">—</div><div class="l">Signalées</div></div>
+      <div class="fhstat"><div class="n" id="stat-free">—</div><div class="l">Gratuites</div></div>
+      <div class="fhstat"><div class="n" id="stat-pmr">—</div><div class="l">PMR</div></div>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="search-input" placeholder="Chercher un lieu, une ville...">
+    <span class="search-clear" id="search-clear" onclick="clearSearch()">✕</span>
+  </div>
+
+  <div class="chips-row" id="filter-chips">
+    <div class="chip active" data-filter="all" onclick="setFilter('all', this)">Tous</div>
+    <div class="chip" data-filter="free" onclick="setFilter('free', this)">🆓 Gratuit</div>
+    <div class="chip" data-filter="pmr" onclick="setFilter('pmr', this)">♿ PMR</div>
+    <div class="chip" data-filter="open" onclick="setFilter('open', this)">🟢 Ouvert</div>
+    <div class="chip" data-filter="clean" onclick="setFilter('clean', this)">✨ Propre</div>
+    <div class="chip" data-filter="rated" onclick="setFilter('rated', this)">⭐ Bien noté</div>
+  </div>
+
+  <!-- FEATURED -->
+  <div class="section-head">
+    <div class="section-title">⭐ À la Une</div>
+    <div class="section-link" onclick="setFilter('rated', document.querySelector('[data-filter=rated]'))">Voir tout</div>
+  </div>
+  <div id="featured-scroll" class="featured-scroll"></div>
+
+  <!-- LIST -->
+  <div class="sort-bar">
+    <div class="count" id="results-count">Chargement...</div>
+    <select class="sort-select" id="sort-select" onchange="renderFeed()">
+      <option value="recent">Plus récent</option>
+      <option value="rating">Mieux noté</option>
+      <option value="name">A–Z</option>
+    </select>
+  </div>
+
+  <div id="cards-list" class="cards-list"></div>
+</div>
+
+<!-- ==================== MAP PAGE ==================== -->
+<div id="page-map" class="page hidden" style="padding: calc(var(--nav-h)) 0 0;">
+  <div class="map-placeholder" id="map-container">
+    <div style="font-size:14px; font-weight: 700; color: var(--accent); font-family: var(--font-display);">🗺️ Carte Interactive</div>
+    <p>Localisation en cours...</p>
+    <div class="map-pin-container" id="map-pins"></div>
+  </div>
+</div>
+
+<!-- ==================== TOP PAGE ==================== -->
+<div id="page-top" class="page hidden">
+  <h2 style="font-family: var(--font-display); font-size: 22px; margin-bottom: 6px;">🏆 Classement</h2>
+  <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Les mieux notés par la communauté</p>
+  <div id="top-list" class="cards-list"></div>
+</div>
+
+<!-- ==================== PROFILE PAGE ==================== -->
+<div id="page-profile" class="page hidden">
+  <div class="profile-header">
+    <div class="profile-avatar-big" id="profile-avatar">?</div>
+    <div class="profile-name" id="profile-name">Utilisateur</div>
+    <div class="profile-mail" id="profile-mail-text"></div>
+  </div>
+  <div class="profile-stats">
+    <div class="pstat"><div class="n" id="prof-stat-add">0</div><div class="l">Signalées</div></div>
+    <div class="pstat"><div class="n" id="prof-stat-reviews">0</div><div class="l">Avis</div></div>
+    <div class="pstat"><div class="n" id="prof-stat-liked">0</div><div class="l">Favoris</div></div>
+  </div>
+  <div class="settings-list">
+    <div class="settings-item" onclick="togglePref('free')">
+      <div class="settings-item-left"><span class="settings-item-icon">🆓</span><div><div class="settings-item-label">Uniquement Gratuit</div></div></div>
+      <div class="toggle" id="pref-free"></div>
+    </div>
+    <div class="settings-item" onclick="togglePref('pmr')">
+      <div class="settings-item-left"><span class="settings-item-icon">♿</span><div><div class="settings-item-label">Accès PMR requis</div></div></div>
+      <div class="toggle" id="pref-pmr"></div>
+    </div>
+    <div class="settings-item" onclick="togglePref('notif')">
+      <div class="settings-item-left"><span class="settings-item-icon">🔔</span><div><div class="settings-item-label">Notifications</div></div></div>
+      <div class="toggle" id="pref-notif"></div>
+    </div>
+  </div>
+  <div class="settings-list">
+    <div class="settings-item" onclick="openModal('feedback')">
+      <div class="settings-item-left"><span class="settings-item-icon">💬</span><div><div class="settings-item-label">Envoyer un retour</div></div></div>
+      <span style="color: var(--text-muted); font-size: 18px;">›</span>
+    </div>
+    <div class="settings-item" onclick="doLogout()" style="color: #E84040;">
+      <div class="settings-item-left"><span class="settings-item-icon">🚪</span><div><div class="settings-item-label" style="color:#E84040;">Se déconnecter</div></div></div>
+      <span style="font-size: 18px;">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DETAIL PAGE ==================== -->
+<div id="page-detail" class="page-full hidden">
+  <div class="detail-back" onclick="closeDetail()">‹</div>
+  <div id="detail-hero" class="detail-hero">🚽</div>
+  <div class="detail-body">
+    <div id="detail-tags" class="card-tags" style="padding: 0 0 12px;"></div>
+    <div class="detail-name" id="detail-name">Nom du lieu</div>
+    <div class="detail-address" id="detail-address">Adresse</div>
+    <div class="detail-rating-row">
+      <div>
+        <div class="big-rating" id="detail-rating">4.2</div>
+        <div class="stars" id="detail-stars">⭐⭐⭐⭐☆</div>
+        <div style="font-size:11px; color:var(--text-muted);" id="detail-review-count">12 avis</div>
+      </div>
+      <div class="rating-breakdown" id="detail-bars"></div>
+    </div>
+    <div class="detail-info-grid" id="detail-info-grid"></div>
+    <div class="detail-actions">
+      <button class="btn btn-primary btn-sm" style="padding:12px;" onclick="openDirections()">🗺 Itinéraire</button>
+      <button class="btn btn-ghost btn-sm" style="padding:12px;" onclick="shareToilet()">↗ Partager</button>
+      <button class="btn btn-ghost btn-sm" style="padding:12px;" id="detail-like-btn" onclick="toggleLike()">🤍 J'aime</button>
+    </div>
+    <div class="reviews-section">
+      <div class="reviews-title">💬 Avis de la communauté</div>
+      <div class="add-review-form">
+        <h4>Laisser un avis</h4>
+        <div class="star-picker" id="star-picker">
+          <span class="star-btn" data-v="1" onclick="setReviewStar(1)">☆</span>
+          <span class="star-btn" data-v="2" onclick="setReviewStar(2)">☆</span>
+          <span class="star-btn" data-v="3" onclick="setReviewStar(3)">☆</span>
+          <span class="star-btn" data-v="4" onclick="setReviewStar(4)">☆</span>
+          <span class="star-btn" data-v="5" onclick="setReviewStar(5)">☆</span>
         </div>
+        <textarea id="review-text" placeholder="Partagez votre expérience..."></textarea>
+        <button class="btn btn-primary mt-10" onclick="submitReview()">Publier l'avis</button>
+      </div>
+      <div id="reviews-list"></div>
     </div>
+  </div>
+</div>
 
-    <div id="nav-bottom" class="nav-bottom hidden">
-        <div onclick="showPage('feed')">🏠</div>
-        <div onclick="document.getElementById('modal-add').classList.remove('hidden')" style="background:var(--accent); color:white; width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-25px; font-size:24px; border:5px solid var(--bg)">+</div>
-        <div onclick="doLogout()">🚪</div>
+<!-- ==================== MODAL: ADD TOILET ==================== -->
+<div id="modal-add" class="modal-overlay hidden" onclick="closeModalOnOverlay(event,'modal-add')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📍 Signaler un lieu</div>
+    <div class="input-group"><label class="input-label">Nom du lieu *</label><input type="text" id="add-name" placeholder="Ex: McDonald's Champs-Élysées"></div>
+    <div class="input-group"><label class="input-label">Adresse ou Ville</label><input type="text" id="add-address" placeholder="Ex: 75001 Paris"></div>
+    <div class="flex-row mt-10">
+      <div class="input-group">
+        <label class="input-label">Tarif</label>
+        <select id="add-price"><option>Gratuit</option><option>Payant</option></select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Statut</label>
+        <select id="add-status"><option>Ouvert</option><option>Fermé</option><option>Inconnu</option></select>
+      </div>
     </div>
+    <div class="settings-list mt-10" style="margin-bottom:14px;">
+      <div class="settings-item" onclick="toggleAdd('pmr')">
+        <div class="settings-item-left"><span class="settings-item-icon">♿</span><div class="settings-item-label">Accès PMR</div></div>
+        <div class="toggle" id="add-pmr"></div>
+      </div>
+      <div class="settings-item" onclick="toggleAdd('baby')">
+        <div class="settings-item-left"><span class="settings-item-icon">👶</span><div class="settings-item-label">Table à langer</div></div>
+        <div class="toggle" id="add-baby"></div>
+      </div>
+      <div class="settings-item" onclick="toggleAdd('clean')">
+        <div class="settings-item-left"><span class="settings-item-icon">✨</span><div class="settings-item-label">Propre</div></div>
+        <div class="toggle" id="add-clean"></div>
+      </div>
+    </div>
+    <div class="input-group"><label class="input-label">Note (1-5)</label>
+      <div class="star-picker" id="add-stars">
+        <span class="star-btn" data-v="1" onclick="setAddStar(1)">☆</span>
+        <span class="star-btn" data-v="2" onclick="setAddStar(2)">☆</span>
+        <span class="star-btn" data-v="3" onclick="setAddStar(3)">☆</span>
+        <span class="star-btn" data-v="4" onclick="setAddStar(4)">☆</span>
+        <span class="star-btn" data-v="5" onclick="setAddStar(5)">☆</span>
+      </div>
+    </div>
+    <div class="input-group"><label class="input-label">Commentaire</label><textarea id="add-comment" placeholder="Description du lieu..."></textarea></div>
+    <button class="btn btn-primary" onclick="submitToilet()">Publier le signalement</button>
+    <button class="btn btn-ghost mt-10" onclick="closeModal('add')">Annuler</button>
+  </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+<!-- ==================== MODAL: FEEDBACK ==================== -->
+<div id="modal-feedback" class="modal-overlay hidden" onclick="closeModalOnOverlay(event,'modal-feedback')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💬 Envoyer un retour</div>
+    <div class="input-group"><label class="input-label">Votre message</label><textarea id="feedback-text" placeholder="Idées, bugs, suggestions..." style="min-height:120px;"></textarea></div>
+    <button class="btn btn-primary" onclick="submitFeedback()">Envoyer</button>
+    <button class="btn btn-ghost mt-10" onclick="closeModal('feedback')">Annuler</button>
+  </div>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
-            authDomain: "flushr-ca973.firebaseapp.com",
-            projectId: "flushr-ca973",
-            storageBucket: "flushr-ca973.firebasestorage.app",
-            messagingSenderId: "637232955486",
-            appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf"
-        };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy, updateDoc, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+const firebaseConfig = {
+  apiKey: "AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY",
+  authDomain: "flushr-ca973.firebaseapp.com",
+  projectId: "flushr-ca973",
+  storageBucket: "flushr-ca973.firebasestorage.app",
+  messagingSenderId: "637232955486",
+  appId: "1:637232955486:web:9eba4e51f1e2d6d89874cf"
+};
 
-        let userPrefs = null;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-        // NAVIGATION ENTRE PAGES
-        window.showPage = (p) => {
-            document.getElementById('page-login').classList.add('hidden');
-            document.getElementById('page-setup').classList.add('hidden');
-            document.getElementById('page-feed').classList.add('hidden');
-            document.getElementById('navbar').classList.toggle('hidden', p === 'login');
-            document.getElementById('nav-bottom').classList.toggle('hidden', p === 'login' || p === 'setup');
-            document.getElementById('page-' + p).classList.remove('hidden');
-            if(p === 'feed') renderFeed();
-        };
+let userPrefs = { onlyFree: false, onlyPMR: false, onlyOpen: false, notif: false };
+let currentUser = null;
+let allToilets = [];
+let activeFilter = 'all';
+let currentToiletId = null;
+let reviewStars = 0;
+let addStars = 0;
+let addToggles = { pmr: false, baby: false, clean: false };
+let setupToggles = { free: false, pmr: false, open: false };
+let likedIds = new Set();
 
-        // AUTHENTIFICATION
-        window.doGoogleLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e){ alert(e.message); } };
-        
-        window.doManualAuth = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (e) {
-                if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-                    try { await createUserWithEmailAndPassword(auth, email, pass); } catch(err) { alert(err.message); }
-                } else { alert(e.message); }
-            }
-        };
+const DEMO = [
+  { id: 'demo1', name: 'McDonald\'s Louvre', address: 'Rue de Rivoli, Paris 1er', price: 'Gratuit', hasPMR: true, hasBaby: true, isClean: true, status: 'Ouvert', rating: 4.2, reviewCount: 28, createdAt: { seconds: Date.now()/1000 - 200 }, emoji: '🍔' },
+  { id: 'demo2', name: 'Toilettes Publiques Bastille', address: 'Place de la Bastille, Paris 11e', price: 'Gratuit', hasPMR: true, hasBaby: false, isClean: false, status: 'Ouvert', rating: 2.9, reviewCount: 14, createdAt: { seconds: Date.now()/1000 - 500 }, emoji: '🏛️' },
+  { id: 'demo3', name: 'Galeries Lafayette', address: 'Boulevard Haussmann, Paris 9e', price: 'Gratuit', hasPMR: true, hasBaby: true, isClean: true, status: 'Ouvert', rating: 4.6, reviewCount: 63, createdAt: { seconds: Date.now()/1000 - 800 }, emoji: '🛍️' },
+  { id: 'demo4', name: 'Gare de Lyon', address: 'Place Louis Armand, Paris 12e', price: 'Payant', hasPMR: true, hasBaby: false, isClean: true, status: 'Ouvert', rating: 3.4, reviewCount: 41, createdAt: { seconds: Date.now()/1000 - 1200 }, emoji: '🚂' },
+  { id: 'demo5', name: 'Parc des Buttes Chaumont', address: 'Rue Manin, Paris 19e', price: 'Gratuit', hasPMR: false, hasBaby: false, isClean: false, status: 'Ouvert', rating: 3.1, reviewCount: 9, createdAt: { seconds: Date.now()/1000 - 1600 }, emoji: '🌳' },
+  { id: 'demo6', name: 'Musée d\'Orsay', address: 'Rue de la Légion d\'Honneur, Paris 7e', price: 'Gratuit', hasPMR: true, hasBaby: true, isClean: true, status: 'Ouvert', rating: 4.8, reviewCount: 97, createdAt: { seconds: Date.now()/1000 - 2000 }, emoji: '🎨' },
+];
 
-        window.doLogout = () => signOut(auth);
+const DEMO_REVIEWS = {
+  demo1: [
+    { author: 'Marie B.', date: 'Il y a 2 jours', rating: 5, text: 'Très propre, accessible facilement. Personnel sympa.' },
+    { author: 'Lucas D.', date: 'Il y a 1 semaine', rating: 4, text: 'Bien entretenu pour un fast food.' },
+  ],
+  demo3: [
+    { author: 'Sophie L.', date: 'Il y a 3 jours', rating: 5, text: 'Impeccable ! Même des tables à langer dans chaque étage.' },
+    { author: 'Antoine M.', date: 'Il y a 5 jours', rating: 4, text: 'Très bon accès PMR, personnel attentionné.' },
+  ],
+  demo6: [
+    { author: 'Claire R.', date: 'Il y a 1 jour', rating: 5, text: 'Les meilleures toilettes de Paris sans hésiter 😂' },
+  ],
+};
 
-        // PROFIL & PREFERENCES
-        window.saveProfile = async () => {
-            userPrefs = { onlyFree: document.getElementById('pref-free').checked, onlyPMR: document.getElementById('pref-pmr').checked, setupDone: true };
-            await setDoc(doc(db, "users", auth.currentUser.uid), userPrefs);
-            showPage('feed');
-        };
+// ==================== AUTH ====================
+window.doGoogleLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e){ showToast('Erreur Google: ' + e.message); } };
+window.doManualAuth = async () => {
+  const email = document.getElementById('auth-email').value;
+  const pass = document.getElementById('auth-pass').value;
+  if(!email || !pass) return showToast('Remplissez les champs');
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    if (e.code?.includes('invalid-credential') || e.code?.includes('user-not-found')) {
+      try { await createUserWithEmailAndPassword(auth, email, pass); } catch(err) { showToast(err.message); }
+    } else { showToast(e.message); }
+  }
+};
+window.doLogout = () => { signOut(auth); showToast('Déconnecté 👋'); };
 
-        // ACTIONS DATA
-        window.submitToilet = async () => {
-            const name = document.getElementById('add-name').value;
-            if(!name) return alert("Nom requis");
-            await addDoc(collection(db, "toilets"), {
-                name, address: document.getElementById('add-address').value,
-                price: document.getElementById('add-price').value,
-                hasPMR: document.getElementById('add-pmr').checked,
-                createdAt: new Date()
-            });
-            document.getElementById('modal-add').classList.add('hidden');
-            renderFeed();
-        };
+// ==================== PROFILE SETUP ====================
+let setupState = { free: false, pmr: false, open: false };
+window.toggleSetup = (key) => {
+  setupState[key] = !setupState[key];
+  document.getElementById('setup-' + key).classList.toggle('on', setupState[key]);
+};
+window.saveProfile = async () => {
+  userPrefs = { onlyFree: setupState.free, onlyPMR: setupState.pmr, onlyOpen: setupState.open, notif: false, setupDone: true };
+  if(currentUser) await setDoc(doc(db, "users", currentUser.uid), userPrefs);
+  showTab('feed');
+  document.getElementById('page-setup').classList.add('hidden');
+  document.getElementById('topnav').classList.remove('hidden');
+  document.getElementById('bottomnav').classList.remove('hidden');
+};
 
-        async function renderFeed() {
-            const grid = document.getElementById('cards-grid');
-            grid.innerHTML = "Chargement...";
-            const snap = await getDocs(query(collection(db, "toilets"), orderBy("createdAt", "desc")));
-            grid.innerHTML = "";
-            snap.forEach(doc => {
-                const t = doc.data();
-                // FILTRE AUTOMATIQUE
-                if(userPrefs?.onlyFree && t.price !== 'Gratuit') return;
-                if(userPrefs?.onlyPMR && !t.hasPMR) return;
+// ==================== PREFERENCES ====================
+window.togglePref = (key) => {
+  const el = document.getElementById('pref-' + key);
+  const on = !el.classList.contains('on');
+  el.classList.toggle('on', on);
+  if(key === 'free') userPrefs.onlyFree = on;
+  if(key === 'pmr') userPrefs.onlyPMR = on;
+  if(key === 'notif') userPrefs.notif = on;
+  if(currentUser) setDoc(doc(db, "users", currentUser.uid), userPrefs);
+  showToast('Préférences sauvegardées ✓');
+};
 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<h3>${t.name}</h3><p style="font-size:12px; color:gray;">${t.address}</p>
-                                  <span class="tag">${t.price}</span> ${t.hasPMR ? '<span class="tag">♿ PMR</span>' : ''}`;
-                grid.appendChild(card);
-            });
-        }
+// ==================== TABS ====================
+window.showTab = (tab) => {
+  ['feed','map','top','profile'].forEach(t => {
+    document.getElementById('page-' + t).classList.add('hidden');
+    document.getElementById('tab-' + t)?.classList.remove('active');
+  });
+  document.getElementById('page-' + tab).classList.remove('hidden');
+  document.getElementById('tab-' + tab)?.classList.add('active');
+  if(tab === 'feed') renderFeed();
+  if(tab === 'top') renderTop();
+  if(tab === 'map') renderMap();
+  if(tab === 'profile') renderProfile();
+};
 
-        // SURVEILLANCE CONNEXION
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('user-mail').innerText = user.email;
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists() && userDoc.data().setupDone) {
-                    userPrefs = userDoc.data();
-                    showPage('feed');
-                } else {
-                    showPage('setup');
-                }
-            } else {
-                showPage('login');
-            }
-        });
-    </script>
+// ==================== MODALS ====================
+window.openModal = (id) => { document.getElementById('modal-' + id).classList.remove('hidden'); };
+window.closeModal = (id) => { document.getElementById('modal-' + id).classList.add('hidden'); };
+window.closeModalOnOverlay = (e, id) => { if(e.target === document.getElementById('modal-' + id)) closeModal(id); };
+
+// ==================== TOGGLES IN ADD ====================
+window.toggleAdd = (key) => {
+  addToggles[key] = !addToggles[key];
+  document.getElementById('add-' + key).classList.toggle('on', addToggles[key]);
+};
+
+// ==================== SEARCH ====================
+document.getElementById('search-input').addEventListener('input', function() {
+  document.getElementById('search-clear').style.display = this.value ? 'block' : 'none';
+  renderFeed();
+});
+window.clearSearch = () => {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  renderFeed();
+};
+
+// ==================== FILTERS ====================
+window.setFilter = (f, el) => {
+  activeFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderFeed();
+};
+
+// ==================== DATA ====================
+async function loadToilets() {
+  try {
+    const snap = await getDocs(query(collection(db, "toilets"), orderBy("createdAt", "desc")));
+    const fromDB = [];
+    snap.forEach(d => fromDB.push({ id: d.id, ...d.data() }));
+    allToilets = [...DEMO, ...fromDB];
+  } catch {
+    allToilets = [...DEMO];
+  }
+  updateHeroStats();
+  renderFeed();
+  renderFeatured();
+}
+
+function updateHeroStats() {
+  document.getElementById('stat-total').textContent = allToilets.length;
+  document.getElementById('stat-free').textContent = allToilets.filter(t => t.price === 'Gratuit').length;
+  document.getElementById('stat-pmr').textContent = allToilets.filter(t => t.hasPMR).length;
+}
+
+// ==================== RENDER FEED ====================
+window.renderFeed = () => {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const sort = document.getElementById('sort-select').value;
+  let list = [...allToilets];
+
+  if(userPrefs.onlyFree) list = list.filter(t => t.price === 'Gratuit');
+  if(userPrefs.onlyPMR) list = list.filter(t => t.hasPMR);
+  if(activeFilter === 'free') list = list.filter(t => t.price === 'Gratuit');
+  if(activeFilter === 'pmr') list = list.filter(t => t.hasPMR);
+  if(activeFilter === 'open') list = list.filter(t => t.status === 'Ouvert');
+  if(activeFilter === 'clean') list = list.filter(t => t.isClean);
+  if(activeFilter === 'rated') list = list.filter(t => (t.rating||0) >= 4);
+  if(search) list = list.filter(t => t.name.toLowerCase().includes(search) || (t.address||'').toLowerCase().includes(search));
+
+  if(sort === 'rating') list.sort((a,b) => (b.rating||0)-(a.rating||0));
+  else if(sort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+  else list.sort((a,b) => (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+
+  document.getElementById('results-count').textContent = list.length + ' lieu' + (list.length>1?'x':'') + ' trouvé' + (list.length>1?'s':'');
+
+  const grid = document.getElementById('cards-list');
+  if(list.length === 0) { grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>Aucun résultat</h3><p>Essayez d'autres filtres ou <br>soyez le premier à signaler un lieu !</p></div>`; return; }
+  grid.innerHTML = '';
+  list.forEach((t, i) => {
+    const el = buildCard(t);
+    el.style.animationDelay = (i * 40) + 'ms';
+    grid.appendChild(el);
+  });
+};
+
+function renderFeatured() {
+  const list = [...allToilets].sort((a,b) => (b.rating||0)-(a.rating||0)).slice(0,6);
+  const wrap = document.getElementById('featured-scroll');
+  wrap.innerHTML = '';
+  list.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'featured-card';
+    el.innerHTML = `<div class="featured-thumb">${t.emoji||'🚽'}</div>
+      <div class="featured-info">
+        <div class="featured-name">${t.name}</div>
+        <div class="featured-stars">${starsHtml(t.rating||0)}</div>
+        <div class="featured-sub">${t.price}</div>
+      </div>`;
+    el.onclick = () => openDetail(t.id);
+    wrap.appendChild(el);
+  });
+}
+
+// ==================== CARD BUILDER ====================
+function buildCard(t) {
+  const el = document.createElement('div');
+  el.className = 'toilet-card';
+  const liked = likedIds.has(t.id);
+  el.innerHTML = `
+    <div class="card-header">
+      <div class="card-thumb">${t.emoji||'🚽'}</div>
+      <div class="card-info">
+        <div class="card-name">${t.name}</div>
+        <div class="card-address">📍 ${t.address||'—'}</div>
+        <div class="card-meta">
+          <span class="stars">${starsHtml(t.rating||0)}</span>
+          <span class="rating-count">(${t.reviewCount||0})</span>
+          <span class="card-distance">${randomDist()} km</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag ${t.price==='Gratuit'?'free':'paid'}">${t.price==='Gratuit'?'🆓 Gratuit':'💰 Payant'}</span>
+      ${t.hasPMR?'<span class="tag pmr">♿ PMR</span>':''}
+      ${t.hasBaby?'<span class="tag">👶 Langer</span>':''}
+      ${t.isClean?'<span class="tag">✨ Propre</span>':''}
+      ${t.status?`<span class="tag ${t.status==='Ouvert'?'open':'closed'}">${t.status==='Ouvert'?'🟢':'🔴'} ${t.status}</span>`:''}
+    </div>
+    <div class="card-actions">
+      <button class="card-action-btn" onclick="event.stopPropagation(); openDetail('${t.id}')">💬 Avis</button>
+      <button class="card-action-btn" onclick="event.stopPropagation(); openDirectionsFor('${t.id}')">🗺 Y aller</button>
+      <button class="card-action-btn ${liked?'liked':''}" id="like-btn-${t.id}" onclick="event.stopPropagation(); toggleLikeCard('${t.id}')">
+        ${liked?'❤️':'🤍'} ${liked?'Aimé':'J\'aime'}
+      </button>
+    </div>`;
+  el.querySelector('.card-header').addEventListener('click', () => openDetail(t.id));
+  return el;
+}
+
+// ==================== DETAIL ====================
+window.openDetail = (id) => {
+  currentToiletId = id;
+  const t = allToilets.find(x => x.id === id);
+  if(!t) return;
+  document.getElementById('detail-hero').textContent = t.emoji||'🚽';
+  document.getElementById('detail-name').textContent = t.name;
+  document.getElementById('detail-address').textContent = '📍 ' + (t.address||'—');
+  const r = t.rating||0;
+  document.getElementById('detail-rating').textContent = r.toFixed(1);
+  document.getElementById('detail-stars').innerHTML = starsHtml(r);
+  document.getElementById('detail-review-count').textContent = (t.reviewCount||0) + ' avis';
+
+  // bars
+  const bars = document.getElementById('detail-bars');
+  bars.innerHTML = [5,4,3,2,1].map(n => `<div class="rating-bar-row"><span class="rating-bar-label">${n}</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:${fakeBarPct(n,r)}%"></div></div></div>`).join('');
+
+  // tags
+  const tags = document.getElementById('detail-tags');
+  tags.innerHTML = `<span class="tag ${t.price==='Gratuit'?'free':'paid'}">${t.price==='Gratuit'?'🆓 Gratuit':'💰 Payant'}</span>
+    ${t.hasPMR?'<span class="tag pmr">♿ PMR</span>':''}${t.hasBaby?'<span class="tag">👶 Table langer</span>':''}${t.isClean?'<span class="tag">✨ Propre</span>':''}
+    ${t.status?`<span class="tag ${t.status==='Ouvert'?'open':'closed'}">${t.status==='Ouvert'?'🟢':'🔴'} ${t.status}`:''}`;
+
+  // info grid
+  const ig = document.getElementById('detail-info-grid');
+  ig.innerHTML = `
+    <div class="info-block"><div class="ib-label">Tarif</div><div class="ib-val">${t.price}</div></div>
+    <div class="info-block"><div class="ib-label">Statut</div><div class="ib-val">${t.status||'?'}</div></div>
+    <div class="info-block"><div class="ib-label">PMR</div><div class="ib-val">${t.hasPMR?'✅ Oui':'❌ Non'}</div></div>
+    <div class="info-block"><div class="ib-label">Table langer</div><div class="ib-val">${t.hasBaby?'✅ Oui':'❌ Non'}</div></div>`;
+
+  // like
+  const liked = likedIds.has(id);
+  document.getElementById('detail-like-btn').innerHTML = liked ? '❤️ Aimé' : '🤍 J\'aime';
+
+  // reviews
+  renderReviews(id);
+
+  // reset stars
+  reviewStars = 0;
+  updateStarPicker('star-picker', 0);
+
+  ['page-feed','page-top','page-map','page-profile'].forEach(p => document.getElementById(p).classList.add('hidden'));
+  document.getElementById('page-detail').classList.remove('hidden');
+  window.scrollTo(0,0);
+};
+
+window.closeDetail = () => {
+  document.getElementById('page-detail').classList.add('hidden');
+  const activeTab = document.querySelector('.bnav-item.active');
+  const tab = activeTab?.id?.replace('tab-','') || 'feed';
+  showTab(tab);
+};
+
+function renderReviews(id) {
+  const list = DEMO_REVIEWS[id] || [];
+  const wrap = document.getElementById('reviews-list');
+  if(list.length === 0) { wrap.innerHTML = '<div class="empty-state" style="padding:20px"><p>Aucun avis pour l\'instant. Soyez le premier !</p></div>'; return; }
+  wrap.innerHTML = list.map(r => `
+    <div class="review-card">
+      <div class="review-top">
+        <div class="review-avatar">${r.author[0]}</div>
+        <div>
+          <div class="review-author">${r.author}</div>
+          <div class="review-stars">${starsHtml(r.rating)}</div>
+        </div>
+        <div class="review-date" style="margin-left:auto">${r.date}</div>
+      </div>
+      <div class="review-text">${r.text}</div>
+    </div>`).join('');
+}
+
+// ==================== REVIEW ====================
+window.setReviewStar = (n) => { reviewStars = n; updateStarPicker('star-picker', n); };
+window.setAddStar = (n) => { addStars = n; updateStarPicker('add-stars', n); };
+function updateStarPicker(id, n) {
+  document.querySelectorAll(`#${id} .star-btn`).forEach((s,i) => { s.textContent = i < n ? '⭐' : '☆'; });
+}
+window.submitReview = async () => {
+  if(!reviewStars) return showToast('Choisissez une note ⭐');
+  const text = document.getElementById('review-text').value;
+  if(!text.trim()) return showToast('Écrivez un commentaire');
+  const rev = { author: currentUser?.email?.split('@')[0] || 'Anonyme', date: 'À l\'instant', rating: reviewStars, text };
+  if(!DEMO_REVIEWS[currentToiletId]) DEMO_REVIEWS[currentToiletId] = [];
+  DEMO_REVIEWS[currentToiletId].unshift(rev);
+  document.getElementById('review-text').value = '';
+  reviewStars = 0;
+  updateStarPicker('star-picker', 0);
+  renderReviews(currentToiletId);
+  showToast('Avis publié ! Merci 🙏');
+};
+
+// ==================== ADD TOILET ====================
+window.submitToilet = async () => {
+  const name = document.getElementById('add-name').value.trim();
+  if(!name) return showToast('Nom du lieu requis');
+  const t = {
+    name, address: document.getElementById('add-address').value,
+    price: document.getElementById('add-price').value,
+    status: document.getElementById('add-status').value,
+    hasPMR: addToggles.pmr, hasBaby: addToggles.baby, isClean: addToggles.clean,
+    rating: addStars || null, reviewCount: addStars ? 1 : 0,
+    createdAt: { seconds: Date.now()/1000 }, emoji: pickEmoji(document.getElementById('add-name').value),
+    addedBy: currentUser?.uid || 'anon'
+  };
+  try { await addDoc(collection(db, "toilets"), t); } catch {}
+  allToilets.unshift({ id: 'local_' + Date.now(), ...t });
+  updateHeroStats();
+  closeModal('add');
+  document.getElementById('add-name').value = '';
+  document.getElementById('add-address').value = '';
+  addToggles = { pmr: false, baby: false, clean: false };
+  ['pmr','baby','clean'].forEach(k => document.getElementById('add-' + k).classList.remove('on'));
+  addStars = 0; updateStarPicker('add-stars', 0);
+  showToast('Lieu signalé ! Merci 🚽');
+  renderFeed(); renderFeatured();
+};
+
+// ==================== LIKES ====================
+window.toggleLike = () => {
+  const btn = document.getElementById('detail-like-btn');
+  if(likedIds.has(currentToiletId)) { likedIds.delete(currentToiletId); btn.innerHTML = '🤍 J\'aime'; showToast('Retiré des favoris'); }
+  else { likedIds.add(currentToiletId); btn.innerHTML = '❤️ Aimé'; showToast('Ajouté aux favoris ❤️'); }
+  document.getElementById('prof-stat-liked').textContent = likedIds.size;
+};
+window.toggleLikeCard = (id) => {
+  const btn = document.getElementById('like-btn-' + id);
+  if(!btn) return;
+  if(likedIds.has(id)) { likedIds.delete(id); btn.innerHTML = '🤍 J\'aime'; btn.classList.remove('liked'); showToast('Retiré des favoris'); }
+  else { likedIds.add(id); btn.innerHTML = '❤️ Aimé'; btn.classList.add('liked'); showToast('Ajouté aux favoris ❤️'); }
+  document.getElementById('prof-stat-liked').textContent = likedIds.size;
+};
+
+// ==================== MAP ====================
+function renderMap() {
+  const container = document.getElementById('map-pins');
+  container.innerHTML = '';
+  const w = window.innerWidth; const h = window.innerHeight - 62 - 72;
+  allToilets.slice(0, 12).forEach((t, i) => {
+    const pin = document.createElement('div');
+    pin.className = 'map-pin';
+    pin.style.left = (15 + Math.random() * 65) + '%';
+    pin.style.top = (10 + Math.random() * 70) + '%';
+    pin.style.animationDelay = (Math.random() * 2) + 's';
+    pin.innerHTML = `<div class="map-pin-label">${t.name.split(' ').slice(0,2).join(' ')}</div>${t.emoji||'🚽'}`;
+    pin.onclick = () => openDetail(t.id);
+    container.appendChild(pin);
+  });
+}
+
+// ==================== TOP ====================
+function renderTop() {
+  const list = [...allToilets].sort((a,b) => (b.rating||0)-(a.rating||0));
+  const wrap = document.getElementById('top-list');
+  wrap.innerHTML = '';
+  list.forEach((t, i) => {
+    const el = buildCard(t);
+    // inject rank
+    const head = el.querySelector('.card-name');
+    head.innerHTML = `<span class="rank-num">#${i+1}</span>${t.name}`;
+    wrap.appendChild(el);
+  });
+}
+
+// ==================== PROFILE ====================
+function renderProfile() {
+  const u = currentUser;
+  if(!u) return;
+  const initials = (u.displayName || u.email || '?')[0].toUpperCase();
+  document.getElementById('profile-avatar').textContent = initials;
+  document.getElementById('avatar-btn').textContent = initials;
+  document.getElementById('profile-name').textContent = u.displayName || u.email?.split('@')[0] || 'Utilisateur';
+  document.getElementById('profile-mail-text').textContent = u.email || '';
+  document.getElementById('prof-stat-add').textContent = allToilets.filter(t => t.addedBy === u.uid).length;
+  document.getElementById('prof-stat-liked').textContent = likedIds.size;
+  document.getElementById('pref-free').classList.toggle('on', !!userPrefs.onlyFree);
+  document.getElementById('pref-pmr').classList.toggle('on', !!userPrefs.onlyPMR);
+  document.getElementById('pref-notif').classList.toggle('on', !!userPrefs.notif);
+}
+
+// ==================== FEEDBACK ====================
+window.submitFeedback = () => {
+  const text = document.getElementById('feedback-text').value.trim();
+  if(!text) return showToast('Écrivez un message');
+  closeModal('feedback');
+  showToast('Merci pour votre retour ! 💚');
+  document.getElementById('feedback-text').value = '';
+};
+
+// ==================== MISC ACTIONS ====================
+window.openDirections = () => {
+  const t = allToilets.find(x => x.id === currentToiletId);
+  if(t?.address) window.open(`https://maps.google.com/?q=${encodeURIComponent(t.address)}`, '_blank');
+};
+window.openDirectionsFor = (id) => {
+  const t = allToilets.find(x => x.id === id);
+  if(t?.address) window.open(`https://maps.google.com/?q=${encodeURIComponent(t.address)}`, '_blank');
+};
+window.shareToilet = () => {
+  if(navigator.share) navigator.share({ title: 'FlushR', text: 'Toilettes trouvées sur FlushR !', url: window.location.href });
+  else { navigator.clipboard?.writeText(window.location.href); showToast('Lien copié !'); }
+};
+
+// ==================== HELPERS ====================
+function starsHtml(r) {
+  const full = Math.floor(r); const half = r % 1 >= 0.5 ? 1 : 0; const empty = 5 - full - half;
+  return '⭐'.repeat(full) + (half ? '✨' : '') + '☆'.repeat(empty);
+}
+function fakeBarPct(n, avg) {
+  const base = [5,15,20,35,60,80];
+  const d = Math.abs(n - avg);
+  return Math.max(5, base[Math.floor(d)] || 30 + Math.random()*30);
+}
+function randomDist() { return (0.1 + Math.random() * 2.8).toFixed(1); }
+function pickEmoji(name) {
+  const n = name.toLowerCase();
+  if(n.includes('mcdonald') || n.includes('burger') || n.includes('fast')) return '🍔';
+  if(n.includes('gare') || n.includes('train')) return '🚂';
+  if(n.includes('parc') || n.includes('jardin')) return '🌳';
+  if(n.includes('musée') || n.includes('galerie')) return '🎨';
+  if(n.includes('café') || n.includes('bar') || n.includes('brasserie')) return '☕';
+  if(n.includes('shopping') || n.includes('galeries') || n.includes('centre')) return '🛍️';
+  if(n.includes('aéroport')) return '✈️';
+  if(n.includes('plage')) return '🏖️';
+  return '🚽';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ==================== AUTH STATE ====================
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if(user) {
+    document.getElementById('page-auth').classList.add('hidden');
+    const initials = (user.displayName || user.email || '?')[0].toUpperCase();
+    document.getElementById('avatar-btn').textContent = initials;
+    try {
+      const ud = await getDoc(doc(db, "users", user.uid));
+      if(ud.exists() && ud.data().setupDone) {
+        userPrefs = ud.data();
+        document.getElementById('topnav').classList.remove('hidden');
+        document.getElementById('bottomnav').classList.remove('hidden');
+        showTab('feed');
+      } else {
+        document.getElementById('page-setup').classList.remove('hidden');
+      }
+    } catch {
+      document.getElementById('topnav').classList.remove('hidden');
+      document.getElementById('bottomnav').classList.remove('hidden');
+      showTab('feed');
+    }
+    await loadToilets();
+  } else {
+    document.getElementById('page-auth').classList.remove('hidden');
+    ['page-feed','page-map','page-top','page-profile','page-detail','page-setup'].forEach(p => document.getElementById(p).classList.add('hidden'));
+    document.getElementById('topnav').classList.add('hidden');
+    document.getElementById('bottomnav').classList.add('hidden');
+  }
+});
+</script>
 </body>
 </html>
