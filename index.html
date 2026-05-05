@@ -3,136 +3,804 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FlushR — Trouvez votre trône</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>FlushR</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  /* [Tes styles restent inchangés ici...] */
-  :root {
-    --bg: #F5F0EA;
-    --surface: #FFFFFF;
-    --accent: #1B6B45;
-    --accent-light: #D4EDE1;
-    --accent2: #F5A623;
-    --text: #111111;
-    --text-muted: #7A7A7A;
-    --border: rgba(0,0,0,0.08);
-    --radius: 20px;
-    --radius-sm: 12px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.07);
-    --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'Outfit', sans-serif;
-    --nav-h: 62px;
-    --bottom-h: 72px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; font-size: 15px; }
-  .hidden { display: none !important; }
-  .topnav {
-    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; padding: 0 18px;
-    justify-content: space-between; z-index: 200;
-    backdrop-filter: blur(12px); background: rgba(255,255,255,0.92);
-  }
-  .topnav-logo { font-family: var(--font-display); font-size: 24px; color: var(--accent); letter-spacing: -0.5px; }
-  .topnav-logo span { color: var(--accent2); }
-  .topnav-right { display: flex; align-items: center; gap: 10px; }
-  .avatar {
-    width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700; color: var(--accent); cursor: pointer; border: 2px solid var(--accent-light);
-  }
-  .notif-btn {
-    width: 34px; height: 34px; border-radius: 50%; background: var(--bg);
-    display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative;
-    font-size: 16px;
-  }
-  .notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: #E84040; border-radius: 50%; border: 1px solid white; display: none; }
-  .notif-dot.active { display: block; }
-  /* [... reste des styles condensés pour la visibilité] */
+:root {
+  --green: #1a5c38;
+  --green-light: #e8f4ed;
+  --green-mid: #2d8653;
+  --amber: #e07b2a;
+  --amber-light: #fdf0e4;
+  --bg: #f8f6f2;
+  --surface: #ffffff;
+  --text: #111;
+  --muted: #888;
+  --border: #e8e8e4;
+  --radius: 16px;
+  --nav: 56px;
+  --bot: 68px;
+  --ff: 'DM Sans', sans-serif;
+  --fd: 'Syne', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: var(--ff); background: var(--bg); color: var(--text); overflow-x: hidden; font-size: 15px; }
+.hidden { display: none !important; }
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--nav);
+  background: rgba(255,255,255,0.94); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; z-index: 100;
+}
+.logo { font-family: var(--fd); font-size: 22px; color: var(--green); }
+.logo em { color: var(--amber); font-style: normal; }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: background .15s; }
+.icon-btn:active { background: var(--green-light); }
+.avatar-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-family: var(--ff); }
+
+.botnav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: var(--bot);
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-around; padding-bottom: 6px; z-index: 100;
+}
+.bnav { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 8px 12px; flex: 1; }
+.bnav .bi { font-size: 21px; transition: transform .15s; }
+.bnav .bl { font-size: 10px; font-weight: 600; color: var(--muted); transition: color .15s; }
+.bnav.active .bl { color: var(--green); }
+.bnav:active .bi { transform: scale(.85); }
+.fab { width: 50px; height: 50px; border-radius: 15px; background: var(--green); color: #fff; font-size: 28px; font-weight: 300; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 16px rgba(26,92,56,.35); transition: all .15s; margin-bottom: 2px; flex-shrink: 0; }
+.fab:active { transform: scale(.92); }
+
+.page { min-height: 100vh; padding: calc(var(--nav) + 14px) 14px calc(var(--bot) + 14px); }
+.page-full { min-height: 100vh; }
+
+.auth-screen { min-height: 100vh; background: var(--green); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden; }
+.auth-screen::before { content: ''; position: absolute; bottom: -80px; right: -80px; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.04); }
+.auth-card { background: #fff; border-radius: 24px; padding: 28px 22px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.18); position: relative; z-index: 1; }
+.auth-head { margin-bottom: 22px; }
+.auth-logo { font-family: var(--fd); font-size: 32px; color: var(--green); }
+.auth-logo em { color: var(--amber); font-style: normal; }
+.auth-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.auth-divider { display: flex; align-items: center; gap: 8px; margin: 14px 0; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.auth-divider span { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+.field { margin-bottom: 10px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 5px; }
+input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border); font-size: 15px; font-family: var(--ff); background: var(--bg); color: var(--text); outline: none; transition: border-color .15s; appearance: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--green); background: #fff; }
+textarea { resize: none; min-height: 80px; line-height: 1.5; }
+
+.btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 13px 16px; border-radius: 12px; border: none; font-weight: 600; font-size: 15px; font-family: var(--ff); cursor: pointer; transition: all .15s; }
+.btn:active { transform: scale(.97); }
+.btn-green { background: var(--green); color: #fff; box-shadow: 0 3px 12px rgba(26,92,56,.25); }
+.btn-green:hover { background: var(--green-mid); }
+.btn-outline { background: #fff; border: 1.5px solid var(--border); color: var(--text); }
+.btn-outline:active { background: var(--bg); }
+.btn-ghost { background: none; border: none; color: var(--muted); font-size: 14px; padding: 10px; cursor: pointer; font-family: var(--ff); display: block; text-align: center; width: 100%; }
+.btn-google { background: #fff; border: 1.5px solid var(--border); color: var(--text); }
+.btn-row { display: flex; gap: 8px; }
+.btn-row .btn { flex: 1; }
+.mt8 { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-wrap input { padding-left: 40px; padding-right: 36px; background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.search-wrap input:focus { box-shadow: 0 2px 12px rgba(26,92,56,.1); }
+.s-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+.s-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; cursor: pointer; display: none; color: var(--muted); line-height: 1; }
+
+.chips { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 2px; margin-bottom: 14px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex-shrink: 0; padding: 6px 14px; border-radius: 40px; border: 1.5px solid var(--border); background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; color: var(--muted); white-space: nowrap; }
+.chip.on { background: var(--green); color: #fff; border-color: var(--green); }
+.chip:active { transform: scale(.94); }
+
+.card-list { display: flex; flex-direction: column; gap: 10px; }
+.tcard { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: box-shadow .2s; animation: up .28s ease both; }
+@keyframes up { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+.tcard:active { box-shadow: 0 0 0 2px var(--green-light); }
+.tcard-top { display: flex; gap: 12px; padding: 14px 14px 10px; }
+.tcard-thumb { width: 66px; height: 66px; border-radius: 12px; background: var(--green-light); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.tcard-info { flex: 1; min-width: 0; }
+.tcard-name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tcard-addr { font-size: 12px; color: var(--muted); margin: 2px 0 6px; }
+.tcard-meta { display: flex; align-items: center; gap: 5px; }
+.stars { font-size: 12px; color: var(--amber); }
+.rc { font-size: 11px; color: var(--muted); }
+.dist { font-size: 11px; color: var(--muted); margin-left: auto; }
+.tcard-tags { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 14px 10px; }
+.tag { padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--bg); color: var(--muted); }
+.tag.g { background: var(--green-light); color: var(--green); }
+.tag.p { background: var(--amber-light); color: var(--amber); }
+.tag.b { background: #dceeff; color: #1e5fa6; }
+.tcard-actions { display: flex; border-top: 1px solid var(--border); }
+.tca { flex: 1; padding: 10px 6px; background: none; border: none; border-right: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--ff); display: flex; align-items: center; justify-content: center; gap: 4px; transition: background .15s; }
+.tca:last-child { border-right: none; }
+.tca:active { background: var(--bg); }
+.tca.liked { color: #d93535; }
+
+.sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sort-bar .cnt { font-size: 13px; color: var(--muted); }
+.sort-sel { background: #fff; border: 1px solid var(--border); padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; font-family: var(--ff); color: var(--text); cursor: pointer; width: auto; }
+
+.hero { background: var(--green); border-radius: var(--radius); padding: 18px 16px; margin-bottom: 14px; position: relative; overflow: hidden; }
+.hero::after { content: '🚽'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 44px; opacity: .12; pointer-events: none; }
+.hero h2 { font-family: var(--fd); font-size: 18px; color: #fff; margin-bottom: 2px; }
+.hero p { font-size: 12px; color: rgba(255,255,255,.7); }
+.hero-stats { display: flex; gap: 16px; margin-top: 12px; }
+.hstat .n { font-family: var(--fd); font-size: 20px; color: #fff; }
+.hstat .l { font-size: 10px; color: rgba(255,255,255,.6); text-transform: uppercase; font-weight: 600; }
+
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sec-title { font-family: var(--fd); font-size: 16px; }
+.sec-more { font-size: 12px; color: var(--green); font-weight: 700; cursor: pointer; background: none; border: none; font-family: var(--ff); }
+.feat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: none; }
+.feat-scroll::-webkit-scrollbar { display: none; }
+.fcard { flex-shrink: 0; width: 148px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: transform .15s; }
+.fcard:active { transform: scale(.96); }
+.fcard-thumb { height: 76px; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 30px; }
+.fcard-info { padding: 9px 10px; }
+.fcard-name { font-weight: 700; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fcard-stars { font-size: 11px; color: var(--amber); }
+.fcard-tag { font-size: 10px; color: var(--muted); }
+
+.detail-wrap { padding-top: var(--nav); padding-bottom: calc(var(--bot) + 14px); }
+.det-thumb { width: 100%; height: 200px; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 72px; }
+.det-body { padding: 16px 14px; }
+.det-name { font-family: var(--fd); font-size: 22px; margin-bottom: 3px; }
+.det-addr { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.rating-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 14px; }
+.big-r { font-family: var(--fd); font-size: 42px; line-height: 1; color: var(--green); }
+.r-stars { font-size: 14px; color: var(--amber); }
+.r-cnt { font-size: 11px; color: var(--muted); }
+.rbars { flex: 1; }
+.rbar-row { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+.rbar-n { font-size: 10px; color: var(--muted); width: 10px; text-align: right; }
+.rbar-bg { flex: 1; height: 4px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+.rbar-fill { height: 100%; background: var(--amber); border-radius: 3px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.iblock { background: var(--bg); border-radius: 12px; padding: 10px 12px; }
+.iblock .il { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; }
+.iblock .iv { font-size: 15px; font-weight: 700; }
+
+.rev-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.rev-top { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.rev-av { width: 30px; height: 30px; border-radius: 50%; background: var(--green-light); color: var(--green); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+.rev-name { font-weight: 700; font-size: 13px; }
+.rev-date { font-size: 11px; color: var(--muted); margin-left: auto; }
+.rev-stars { font-size: 12px; color: var(--amber); }
+.rev-text { font-size: 13px; line-height: 1.5; }
+.add-rev { background: var(--bg); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.add-rev h4 { font-family: var(--fd); font-size: 14px; margin-bottom: 10px; }
+.star-row { display: flex; gap: 5px; margin-bottom: 9px; }
+.star-btn { font-size: 22px; cursor: pointer; transition: transform .1s; user-select: none; line-height: 1; }
+.star-btn:active { transform: scale(.8); }
+
+.map-area { width: 100%; height: calc(100vh - var(--nav) - var(--bot)); background: linear-gradient(145deg, #d4ead9, #c2dcca); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.map-label { font-family: var(--fd); font-size: 18px; color: var(--green); }
+.map-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.map-pins { position: absolute; inset: 0; pointer-events: none; }
+.mpin { position: absolute; cursor: pointer; font-size: 20px; animation: fp 3s ease-in-out infinite; pointer-events: all; }
+@keyframes fp { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-5px) } }
+.mpin-label { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); background: #fff; border-radius: 7px; padding: 2px 7px; font-size: 9px; font-weight: 700; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,.1); color: var(--text); }
+.map-search-bar { position: absolute; top: 10px; left: 12px; right: 12px; z-index: 10; }
+.map-search-bar input { background: rgba(255,255,255,.95); box-shadow: 0 3px 12px rgba(0,0,0,.1); }
+
+.rank-badge { font-family: var(--fd); font-size: 12px; color: var(--muted); margin-right: 4px; }
+
+.prof-head { text-align: center; padding: 8px 0 16px; }
+.prof-av { width: 70px; height: 70px; border-radius: 50%; background: var(--green); color: #fff; font-weight: 700; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+.prof-name { font-family: var(--fd); font-size: 20px; }
+.prof-mail { font-size: 12px; color: var(--muted); }
+.prof-stats { display: flex; justify-content: center; gap: 28px; padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 12px 0; }
+.pstat .n { font-family: var(--fd); font-size: 22px; color: var(--green); }
+.pstat .l { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+.slist { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-bottom: 10px; }
+.sitem { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+.sitem:last-child { border-bottom: none; }
+.sitem:active { background: var(--bg); }
+.sitem-l { display: flex; align-items: center; gap: 10px; }
+.sitem-icon { font-size: 18px; }
+.sitem-text .label { font-size: 14px; font-weight: 500; }
+.sitem-text .sub { font-size: 11px; color: var(--muted); }
+.sitem-arrow { font-size: 17px; color: var(--muted); }
+.toggle { width: 40px; height: 22px; border-radius: 11px; background: #ddd; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.toggle.on { background: var(--green); }
+.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.toggle.on::after { left: 21px; }
+
+.setup-screen { min-height: 100vh; background: var(--green); display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(2px); }
+.sheet { background: #fff; border-radius: 22px 22px 0 0; padding: 22px 16px; width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto; animation: su .3s cubic-bezier(.34,1.2,.64,1); }
+@keyframes su { from { transform:translateY(100%) } to { transform:translateY(0) } }
+.sheet-handle { width: 32px; height: 4px; border-radius: 2px; background: #e0e0e0; margin: 0 auto 18px; }
+.sheet-title { font-family: var(--fd); font-size: 18px; margin-bottom: 16px; }
+
+.toast { position: fixed; bottom: calc(var(--bot) + 12px); left: 50%; transform: translateX(-50%) translateY(10px); background: #111; color: #fff; padding: 9px 18px; border-radius: 40px; font-size: 13px; font-weight: 500; z-index: 500; opacity: 0; transition: all .25s; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.empty { text-align: center; padding: 44px 16px; }
+.empty .ei { font-size: 42px; margin-bottom: 10px; }
+.empty h3 { font-family: var(--fd); font-size: 17px; margin-bottom: 5px; }
+.empty p { font-size: 13px; color: var(--muted); }
+
+@media (min-width: 580px) {
+  .card-list { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .page { padding-left: max(14px, calc(50vw - 380px)); padding-right: max(14px, calc(50vw - 380px)); }
+  .sheet { border-radius: 22px; margin-bottom: 30px; }
+}
+@media (min-width: 860px) {
+  .card-list { grid-template-columns: repeat(3, 1fr); }
+  .page { padding-left: max(14px, calc(50vw - 570px)); padding-right: max(14px, calc(50vw - 570px)); }
+}
 </style>
 </head>
 <body>
 
-<nav id="topnav" class="topnav">
-  <div class="topnav-logo">Flush<span>R</span></div>
-  <div class="topnav-right">
-    <div class="notif-btn" id="notif-btn" onclick="checkNotifications()">🔔<span class="notif-dot" id="notif-dot"></span></div>
-    <div class="avatar" id="avatar-btn">A</div>
+<nav id="topnav" class="topnav hidden">
+  <div class="logo">Flush<em>R</em></div>
+  <div class="nav-right">
+    <button class="icon-btn" id="notif-btn" onclick="handleNotif()">🔔</button>
+    <button class="avatar-btn" id="avatar-btn" onclick="showTab('profile')">?</button>
   </div>
 </nav>
 
-<!-- Scripts avec intégration Admin et Notifications -->
-<script>
-  // 1. Structure des utilisateurs avec compte Admin
-  const users = {
-    "admin1": {
-      "name": "Admin",
-      "role": "Administrator",
-      "access_level": 5,
-      "notifications": []
-    }
-  };
-
-  // 2. Activation et Logique du système de notification
-  let notificationsActive = true;
-
-  function sendNotification(userId, message) {
-    if (!notificationsActive) return;
-    
-    if (users[userId]) {
-      users[userId].notifications.push({
-        id: Date.now(),
-        text: message,
-        read: false
-      });
-      updateNotifUI();
-      console.log(`[NOTIFICATION] Pour ${users[userId].name}: ${message}`);
-      showToast("Nouvelle notification !");
-    }
-  }
-
-  function updateNotifUI() {
-    const dot = document.getElementById('notif-dot');
-    const hasUnread = users["admin1"].notifications.some(n => !n.read);
-    if (hasUnread) {
-      dot.classList.add('active');
-    } else {
-      dot.classList.remove('active');
-    }
-  }
-
-  function checkNotifications() {
-    if (users["admin1"].notifications.length > 0) {
-      const lastNotif = users["admin1"].notifications[users["admin1"].notifications.length - 1];
-      alert("Notification Admin: " + lastNotif.text);
-      lastNotif.read = true;
-      updateNotifUI();
-    } else {
-      showToast("Aucune nouvelle notification");
-    }
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  // Initialisation au chargement
-  window.onload = () => {
-    updateNotifUI();
-    // Exemple d'activation automatique
-    setTimeout(() => {
-        sendNotification("admin1", "Bienvenue sur le dashboard FlushR.");
-    }, 2000);
-  };
-</script>
+<div id="botnav" class="botnav hidden">
+  <div class="bnav active" id="tab-feed" onclick="showTab('feed')"><span class="bi">🏠</span><span class="bl">Accueil</span></div>
+  <div class="bnav" id="tab-map" onclick="showTab('map')"><span class="bi">🗺️</span><span class="bl">Carte</span></div>
+  <button class="fab" onclick="openSheet('add')">+</button>
+  <div class="bnav" id="tab-top" onclick="showTab('top')"><span class="bi">🏆</span><span class="bl">Top</span></div>
+  <div class="bnav" id="tab-profile" onclick="showTab('profile')"><span class="bi">👤</span><span class="bl">Profil</span></div>
+</div>
 
 <div id="toast" class="toast"></div>
 
+<!-- AUTH -->
+<div id="page-auth">
+  <div class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-head">
+        <div class="auth-logo">Flush<em>R</em></div>
+        <div class="auth-sub">Trouvez votre trône, partout en France 🚽</div>
+      </div>
+      <button class="btn btn-google" onclick="doGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="17" alt=""> Continuer avec Google
+      </button>
+      <div class="auth-divider"><span>ou</span></div>
+      <div class="field"><label>Email</label><input type="email" id="a-email" placeholder="vous@exemple.com"></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="a-pass" placeholder="••••••••"></div>
+      <button class="btn btn-green mt8" onclick="doAuth()">Connexion / Inscription</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div id="page-setup" class="hidden">
+  <div class="setup-screen">
+    <div class="auth-card">
+      <div class="auth-head">
+        <div style="font-size:28px; margin-bottom:6px;">⚙️</div>
+        <div class="auth-logo" style="font-size:22px;">Préférences</div>
+        <div class="auth-sub">Personnalisez vos résultats</div>
+      </div>
+      <div class="slist" style="margin-bottom:14px;">
+        <div class="sitem" onclick="tog('s-free')">
+          <div class="sitem-l"><span class="sitem-icon">🆓</span><div class="sitem-text"><div class="label">Uniquement gratuit</div><div class="sub">Masquer les payants</div></div></div>
+          <div class="toggle" id="s-free"></div>
+        </div>
+        <div class="sitem" onclick="tog('s-pmr')">
+          <div class="sitem-l"><span class="sitem-icon">♿</span><div class="sitem-text"><div class="label">Accès PMR</div><div class="sub">Accessibilité requise</div></div></div>
+          <div class="toggle" id="s-pmr"></div>
+        </div>
+        <div class="sitem" onclick="tog('s-open')">
+          <div class="sitem-l"><span class="sitem-icon">🟢</span><div class="sitem-text"><div class="label">Ouverts maintenant</div></div></div>
+          <div class="toggle" id="s-open"></div>
+        </div>
+      </div>
+      <button class="btn btn-green" onclick="saveSetup()">Commencer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEED -->
+<div id="page-feed" class="page hidden">
+  <div class="hero">
+    <h2 id="hero-greeting">Bonjour ! 👋</h2>
+    <p>Les meilleures toilettes près de vous</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="n" id="st-total">—</div><div class="l">Lieux</div></div>
+      <div class="hstat"><div class="n" id="st-free">—</div><div class="l">Gratuits</div></div>
+      <div class="hstat"><div class="n" id="st-pmr">—</div><div class="l">PMR</div></div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="s-icon">🔍</span>
+    <input type="text" id="search" placeholder="Chercher un lieu, une ville…" oninput="onSearch(this)">
+    <span class="s-clear" id="s-clear" onclick="clearSearch()">✕</span>
+  </div>
+  <div class="chips" id="chips">
+    <div class="chip on" data-f="all" onclick="setFilter('all',this)">Tous</div>
+    <div class="chip" data-f="free" onclick="setFilter('free',this)">🆓 Gratuit</div>
+    <div class="chip" data-f="pmr" onclick="setFilter('pmr',this)">♿ PMR</div>
+    <div class="chip" data-f="open" onclick="setFilter('open',this)">🟢 Ouvert</div>
+    <div class="chip" data-f="clean" onclick="setFilter('clean',this)">✨ Propre</div>
+    <div class="chip" data-f="best" onclick="setFilter('best',this)">⭐ +4 étoiles</div>
+  </div>
+  <div class="sec-head">
+    <div class="sec-title">⭐ À la une</div>
+    <button class="sec-more" onclick="setFilter('best', document.querySelector('[data-f=best]'))">Voir tout</button>
+  </div>
+  <div id="feat-scroll" class="feat-scroll"></div>
+  <div class="sort-bar">
+    <span class="cnt" id="cnt">…</span>
+    <select class="sort-sel" id="sort" onchange="renderFeed()">
+      <option value="new">Plus récent</option>
+      <option value="rating">Mieux noté</option>
+      <option value="az">A–Z</option>
+    </select>
+  </div>
+  <div id="card-list" class="card-list"></div>
+</div>
+
+<!-- MAP -->
+<div id="page-map" class="hidden" style="padding-top: var(--nav);">
+  <div class="map-area">
+    <div class="map-search-bar">
+      <div class="search-wrap" style="margin:0">
+        <span class="s-icon">🔍</span>
+        <input type="text" id="map-search" placeholder="Filtrer les épingles…" oninput="filterPins(this.value)">
+      </div>
+    </div>
+    <div id="map-pins" class="map-pins"></div>
+    <div class="map-label">🗺️ Carte</div>
+    <div class="map-sub">Appuyez sur une épingle</div>
+  </div>
+</div>
+
+<!-- TOP -->
+<div id="page-top" class="page hidden">
+  <div style="margin-bottom:14px;">
+    <div style="font-family:var(--fd); font-size:20px;">🏆 Classement</div>
+    <div style="font-size:12px; color:var(--muted); margin-top:2px;">Mieux notés par la communauté</div>
+  </div>
+  <div id="top-list" class="card-list"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="page-profile" class="page hidden">
+  <div class="prof-head">
+    <div class="prof-av" id="prof-av">?</div>
+    <div class="prof-name" id="prof-name">Utilisateur</div>
+    <div class="prof-mail" id="prof-mail"></div>
+  </div>
+  <div class="prof-stats">
+    <div class="pstat"><div class="n" id="ps-add">0</div><div class="l">Signalés</div></div>
+    <div class="pstat"><div class="n" id="ps-rev">0</div><div class="l">Avis</div></div>
+    <div class="pstat"><div class="n" id="ps-fav">0</div><div class="l">Favoris</div></div>
+  </div>
+  <div class="slist">
+    <div class="sitem" onclick="tog('p-free'); savePref()">
+      <div class="sitem-l"><span class="sitem-icon">🆓</span><div class="sitem-text"><div class="label">Uniquement gratuit</div></div></div>
+      <div class="toggle" id="p-free"></div>
+    </div>
+    <div class="sitem" onclick="tog('p-pmr'); savePref()">
+      <div class="sitem-l"><span class="sitem-icon">♿</span><div class="sitem-text"><div class="label">Accès PMR requis</div></div></div>
+      <div class="toggle" id="p-pmr"></div>
+    </div>
+    <div class="sitem" onclick="tog('p-notif'); savePref()">
+      <div class="sitem-l"><span class="sitem-icon">🔔</span><div class="sitem-text"><div class="label">Notifications</div></div></div>
+      <div class="toggle" id="p-notif"></div>
+    </div>
+  </div>
+  <div class="slist">
+    <div class="sitem" onclick="openSheet('feedback')">
+      <div class="sitem-l"><span class="sitem-icon">💬</span><div class="sitem-text"><div class="label">Envoyer un retour</div></div></div>
+      <span class="sitem-arrow">›</span>
+    </div>
+    <div class="sitem" onclick="openSheet('about')">
+      <div class="sitem-l"><span class="sitem-icon">ℹ️</span><div class="sitem-text"><div class="label">À propos de FlushR</div></div></div>
+      <span class="sitem-arrow">›</span>
+    </div>
+    <div class="sitem" onclick="doLogout()">
+      <div class="sitem-l"><span class="sitem-icon">🚪</span><div class="sitem-text"><div class="label" style="color:#d93535">Se déconnecter</div></div></div>
+      <span class="sitem-arrow" style="color:#d93535">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page-full hidden">
+  <nav class="topnav" style="z-index:101;">
+    <button style="background:none;border:none;font-size:24px;cursor:pointer;padding:0 4px;" onclick="closeDetail()">‹</button>
+    <div class="logo">Flush<em>R</em></div>
+    <button class="icon-btn" onclick="shareToilet()">↗</button>
+  </nav>
+  <div class="detail-wrap">
+    <div id="d-thumb" class="det-thumb">🚽</div>
+    <div class="det-body">
+      <div id="d-tags" class="tcard-tags" style="padding:0 0 10px;"></div>
+      <div id="d-name" class="det-name"></div>
+      <div id="d-addr" class="det-addr"></div>
+      <div class="rating-row">
+        <div>
+          <div id="d-rating" class="big-r">—</div>
+          <div id="d-stars" class="r-stars"></div>
+          <div id="d-cnt" class="r-cnt"></div>
+        </div>
+        <div id="d-bars" class="rbars"></div>
+      </div>
+      <div id="d-grid" class="info-grid"></div>
+      <div class="btn-row" style="margin-bottom:16px;">
+        <button class="btn btn-green" onclick="goDir()">🗺 Itinéraire</button>
+        <button class="btn btn-outline" id="d-like" onclick="toggleLike()">🤍 Favori</button>
+      </div>
+      <div style="margin-bottom:8px; font-family:var(--fd); font-size:15px;">💬 Avis</div>
+      <div class="add-rev">
+        <h4>Laissez votre avis</h4>
+        <div class="star-row" id="rev-stars">
+          <span class="star-btn" onclick="pickStar(1)">☆</span>
+          <span class="star-btn" onclick="pickStar(2)">☆</span>
+          <span class="star-btn" onclick="pickStar(3)">☆</span>
+          <span class="star-btn" onclick="pickStar(4)">☆</span>
+          <span class="star-btn" onclick="pickStar(5)">☆</span>
+        </div>
+        <textarea id="rev-text" placeholder="Partagez votre expérience…"></textarea>
+        <button class="btn btn-green mt8" onclick="submitRev()">Publier l'avis</button>
+      </div>
+      <div id="rev-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET: ADD -->
+<div id="sheet-add" class="overlay hidden" onclick="closeSheetOvl(event,'add')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">📍 Signaler un lieu</div>
+    <div class="field"><label>Nom du lieu *</label><input type="text" id="an" placeholder="Ex: Café de la Paix"></div>
+    <div class="field"><label>Adresse</label><input type="text" id="aa" placeholder="Ex: 12 Rue des Fleurs, Paris"></div>
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <div class="field" style="flex:1; margin:0;"><label>Tarif</label><select id="ap"><option>Gratuit</option><option>Payant</option></select></div>
+      <div class="field" style="flex:1; margin:0;"><label>Statut</label><select id="as"><option>Ouvert</option><option>Fermé</option><option>Inconnu</option></select></div>
+    </div>
+    <div class="slist" style="margin-bottom:12px;">
+      <div class="sitem" onclick="tog('at-pmr')"><div class="sitem-l"><span class="sitem-icon">♿</span><div class="sitem-text"><div class="label">Accès PMR</div></div></div><div class="toggle" id="at-pmr"></div></div>
+      <div class="sitem" onclick="tog('at-baby')"><div class="sitem-l"><span class="sitem-icon">👶</span><div class="sitem-text"><div class="label">Table à langer</div></div></div><div class="toggle" id="at-baby"></div></div>
+      <div class="sitem" onclick="tog('at-clean')"><div class="sitem-l"><span class="sitem-icon">✨</span><div class="sitem-text"><div class="label">Propre</div></div></div><div class="toggle" id="at-clean"></div></div>
+    </div>
+    <div class="field"><label>Votre note</label>
+      <div class="star-row" id="add-stars">
+        <span class="star-btn" onclick="pickAddStar(1)">☆</span>
+        <span class="star-btn" onclick="pickAddStar(2)">☆</span>
+        <span class="star-btn" onclick="pickAddStar(3)">☆</span>
+        <span class="star-btn" onclick="pickAddStar(4)">☆</span>
+        <span class="star-btn" onclick="pickAddStar(5)">☆</span>
+      </div>
+    </div>
+    <div class="field"><label>Description</label><textarea id="ac" placeholder="Quelques mots…"></textarea></div>
+    <button class="btn btn-green" onclick="submitAdd()">Publier</button>
+    <button class="btn-ghost" onclick="closeSheet('add')">Annuler</button>
+  </div>
+</div>
+
+<!-- SHEET: FEEDBACK -->
+<div id="sheet-feedback" class="overlay hidden" onclick="closeSheetOvl(event,'feedback')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">💬 Envoyer un retour</div>
+    <div class="field"><label>Votre message</label><textarea id="fb-text" placeholder="Bugs, idées, suggestions…" style="min-height:120px;"></textarea></div>
+    <button class="btn btn-green" onclick="submitFb()">Envoyer</button>
+    <button class="btn-ghost" onclick="closeSheet('feedback')">Annuler</button>
+  </div>
+</div>
+
+<!-- SHEET: ABOUT -->
+<div id="sheet-about" class="overlay hidden" onclick="closeSheetOvl(event,'about')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">ℹ️ À propos</div>
+    <p style="font-size:14px; line-height:1.7; color:var(--muted); margin-bottom:14px;">FlushR est une application communautaire pour trouver et signaler des toilettes publiques en France. Chaque signalement aide la communauté.</p>
+    <div class="slist">
+      <div class="sitem"><div class="sitem-l"><span class="sitem-icon">📦</span><div class="sitem-text"><div class="label">Version</div></div></div><span style="font-size:12px;color:var(--muted);">2.0.0</span></div>
+    </div>
+    <button class="btn btn-outline mt8" onclick="closeSheet('about')">Fermer</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const app = initializeApp({ apiKey:"AIzaSyD2Z_crCC6Hfn3haaPqd8UErXxzTcEXKZY", authDomain:"flushr-ca973.firebaseapp.com", projectId:"flushr-ca973", storageBucket:"flushr-ca973.firebasestorage.app", messagingSenderId:"637232955486", appId:"1:637232955486:web:9eba4e51f1e2d6d89874cf" });
+const auth = getAuth(app), db = getFirestore(app), gp = new GoogleAuthProvider();
+
+let me = null, prefs = { onlyFree:false, onlyPMR:false, onlyOpen:false, notif:false };
+let toilets = [], filter = 'all', revStars = 0, addStars = 0;
+let liked = new Set(), currentId = null, myRevCount = 0, myAddCount = 0;
+
+const DEMO = [
+  { id:'d1', name:"McDonald's Louvre",     addr:"Rue de Rivoli, Paris 1er",          price:'Gratuit', pmr:true,  baby:true,  clean:true,  status:'Ouvert', r:4.2, rc:28, emoji:'🍔', ts:9 },
+  { id:'d2', name:"Toilettes Bastille",     addr:"Place de la Bastille, Paris 11e",   price:'Gratuit', pmr:true,  baby:false, clean:false, status:'Ouvert', r:2.9, rc:14, emoji:'🏛️', ts:8 },
+  { id:'d3', name:"Galeries Lafayette",     addr:"Bd Haussmann, Paris 9e",            price:'Gratuit', pmr:true,  baby:true,  clean:true,  status:'Ouvert', r:4.6, rc:63, emoji:'🛍️', ts:7 },
+  { id:'d4', name:"Gare de Lyon",           addr:"Place Louis Armand, Paris 12e",     price:'Payant',  pmr:true,  baby:false, clean:true,  status:'Ouvert', r:3.4, rc:41, emoji:'🚂', ts:6 },
+  { id:'d5', name:"Parc Buttes-Chaumont",   addr:"Rue Manin, Paris 19e",             price:'Gratuit', pmr:false, baby:false, clean:false, status:'Ouvert', r:3.1, rc:9,  emoji:'🌳', ts:5 },
+  { id:'d6', name:"Musée d'Orsay",          addr:"Rue de Légion d'Honneur, Paris 7e", price:'Gratuit', pmr:true,  baby:true,  clean:true,  status:'Ouvert', r:4.8, rc:97, emoji:'🎨', ts:4 },
+  { id:'d7', name:"Aéroport CDG T2",        addr:"95700 Roissy-en-France",            price:'Gratuit', pmr:true,  baby:true,  clean:true,  status:'Ouvert', r:4.1, rc:55, emoji:'✈️', ts:3 },
+  { id:'d8', name:"Centre Pompidou",        addr:"Pl Georges-Pompidou, Paris 4e",     price:'Gratuit', pmr:true,  baby:false, clean:true,  status:'Fermé',  r:3.7, rc:22, emoji:'🏗️', ts:2 },
+];
+const REVS = {
+  d1:[{ who:'Marie B.',  when:'Il y a 2 jours',  r:5, txt:'Très propre, accessible. Personnel sympa.' },
+      { who:'Lucas D.',  when:'Il y a 1 semaine', r:4, txt:'Bien entretenu pour un fast food.' }],
+  d3:[{ who:'Sophie L.', when:'Il y a 3 jours',  r:5, txt:'Impeccable ! Tables à langer à chaque étage.' }],
+  d6:[{ who:'Claire R.', when:'Hier',             r:5, txt:'Meilleures toilettes de Paris 😂' }],
+};
+
+/* helpers */
+function stars(n){ const f=Math.floor(n),h=n%1>=.5?1:0,e=5-f-h; return '⭐'.repeat(f)+(h?'🌟':'')+'☆'.repeat(e); }
+function dist(){ return (0.1+Math.random()*2.8).toFixed(1); }
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500); }
+function isOn(id){ return document.getElementById(id)?.classList.contains('on')||false; }
+function setOn(id,v){ document.getElementById(id)?.classList.toggle('on',v); }
+function setStar(rowId,n){ document.querySelectorAll(`#${rowId} .star-btn`).forEach((s,i)=>s.textContent=i<n?'⭐':'☆'); }
+function barPct(n,avg){ const d=Math.abs(n-avg); if(d<.5) return 65+Math.random()*25; if(d<1.2) return 25+Math.random()*30; return 5+Math.random()*18; }
+function emoji(name){ const n=name.toLowerCase(); if(n.includes('mcdonald')||n.includes('burger')) return '🍔'; if(n.includes('gare')||n.includes('train')) return '🚂'; if(n.includes('parc')||n.includes('jardin')) return '🌳'; if(n.includes('musée')) return '🎨'; if(n.includes('café')||n.includes('bar')) return '☕'; if(n.includes('galeries')||n.includes('shopping')) return '🛍️'; if(n.includes('aéroport')) return '✈️'; return '🚽'; }
+window.tog = (id)=>{ document.getElementById(id)?.classList.toggle('on'); };
+
+/* auth */
+window.doGoogle = async()=>{ try{ await signInWithPopup(auth,gp); }catch(e){ toast('Erreur: '+e.message); } };
+window.doAuth = async()=>{
+  const email=document.getElementById('a-email').value.trim(), pass=document.getElementById('a-pass').value;
+  if(!email||!pass) return toast('Remplissez tous les champs');
+  try{ await signInWithEmailAndPassword(auth,email,pass); }
+  catch(e){ if(e.code?.includes('invalid-credential')||e.code?.includes('user-not-found')){ try{ await createUserWithEmailAndPassword(auth,email,pass); }catch(e2){ toast(e2.message); } }else{ toast(e.message); } }
+};
+window.doLogout = ()=>{ signOut(auth); toast('À bientôt ! 👋'); };
+
+/* setup */
+window.saveSetup = async()=>{
+  prefs={ onlyFree:isOn('s-free'), onlyPMR:isOn('s-pmr'), onlyOpen:isOn('s-open'), notif:false, done:true };
+  if(me) await setDoc(doc(db,'users',me.uid),prefs);
+  enter();
+};
+
+function enter(){
+  ['page-auth','page-setup'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+  document.getElementById('topnav').classList.remove('hidden');
+  document.getElementById('botnav').classList.remove('hidden');
+  showTab('feed');
+}
+
+/* tabs */
+window.showTab = (tab)=>{
+  ['feed','map','top','profile'].forEach(t=>{ document.getElementById('page-'+t).classList.add('hidden'); document.getElementById('tab-'+t)?.classList.remove('active'); });
+  document.getElementById('page-detail').classList.add('hidden');
+  document.getElementById('page-'+tab).classList.remove('hidden');
+  document.getElementById('tab-'+tab)?.classList.add('active');
+  if(tab==='feed') renderFeed();
+  if(tab==='map') renderMap();
+  if(tab==='top') renderTop();
+  if(tab==='profile') renderProfile();
+};
+
+/* sheets */
+window.openSheet = (id)=>document.getElementById('sheet-'+id).classList.remove('hidden');
+window.closeSheet = (id)=>document.getElementById('sheet-'+id).classList.add('hidden');
+window.closeSheetOvl = (e,id)=>{ if(e.target===document.getElementById('sheet-'+id)) closeSheet(id); };
+
+/* search */
+window.onSearch = (inp)=>{ document.getElementById('s-clear').style.display=inp.value?'block':'none'; renderFeed(); };
+window.clearSearch = ()=>{ document.getElementById('search').value=''; document.getElementById('s-clear').style.display='none'; renderFeed(); };
+
+/* filters */
+window.setFilter = (f,el)=>{ filter=f; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el?.classList.add('on'); renderFeed(); };
+
+/* data */
+async function loadData(){
+  try{
+    const snap=await getDocs(query(collection(db,'toilets'),orderBy('ts','desc')));
+    const rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()}));
+    toilets=[...DEMO,...rows];
+  }catch{ toilets=[...DEMO]; }
+  updateStats(); renderFeed(); renderFeatured(); renderMap();
+}
+function updateStats(){
+  document.getElementById('st-total').textContent=toilets.length;
+  document.getElementById('st-free').textContent=toilets.filter(t=>t.price==='Gratuit').length;
+  document.getElementById('st-pmr').textContent=toilets.filter(t=>t.pmr).length;
+}
+
+/* render feed */
+window.renderFeed = ()=>{
+  const q=(document.getElementById('search')?.value||'').toLowerCase();
+  const sort=document.getElementById('sort')?.value||'new';
+  let list=toilets.filter(t=>{
+    if(prefs.onlyFree&&t.price!=='Gratuit') return false;
+    if(prefs.onlyPMR&&!t.pmr) return false;
+    if(filter==='free'&&t.price!=='Gratuit') return false;
+    if(filter==='pmr'&&!t.pmr) return false;
+    if(filter==='open'&&t.status!=='Ouvert') return false;
+    if(filter==='clean'&&!t.clean) return false;
+    if(filter==='best'&&(t.r||0)<4) return false;
+    if(q&&!t.name.toLowerCase().includes(q)&&!(t.addr||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if(sort==='rating') list.sort((a,b)=>(b.r||0)-(a.r||0));
+  else if(sort==='az') list.sort((a,b)=>a.name.localeCompare(b.name));
+  else list.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  document.getElementById('cnt').textContent=list.length+' lieu'+(list.length!==1?'x':'')+' trouvé'+(list.length!==1?'s':'');
+  const wrap=document.getElementById('card-list');
+  if(!list.length){ wrap.innerHTML=`<div class="empty"><div class="ei">🔍</div><h3>Aucun résultat</h3><p>Modifiez les filtres ou signalez un lieu !</p></div>`; return; }
+  wrap.innerHTML='';
+  list.forEach((t,i)=>{ const c=makeCard(t); c.style.animationDelay=i*30+'ms'; wrap.appendChild(c); });
+};
+
+function renderFeatured(){
+  const top=[...toilets].sort((a,b)=>(b.r||0)-(a.r||0)).slice(0,6);
+  const wrap=document.getElementById('feat-scroll'); wrap.innerHTML='';
+  top.forEach(t=>{ const el=document.createElement('div'); el.className='fcard'; el.innerHTML=`<div class="fcard-thumb">${t.emoji||'🚽'}</div><div class="fcard-info"><div class="fcard-name">${t.name}</div><div class="fcard-stars">${stars(t.r||0)}</div><div class="fcard-tag">${t.price}</div></div>`; el.onclick=()=>openDetail(t.id); wrap.appendChild(el); });
+}
+
+/* card */
+function makeCard(t){
+  const el=document.createElement('div'); el.className='tcard';
+  const lk=liked.has(t.id);
+  el.innerHTML=`
+    <div class="tcard-top">
+      <div class="tcard-thumb">${t.emoji||'🚽'}</div>
+      <div class="tcard-info">
+        <div class="tcard-name">${t.name}</div>
+        <div class="tcard-addr">📍 ${t.addr||t.address||'—'}</div>
+        <div class="tcard-meta"><span class="stars">${stars(t.r||0)}</span><span class="rc">(${t.rc||0})</span><span class="dist">${dist()} km</span></div>
+      </div>
+    </div>
+    <div class="tcard-tags">
+      <span class="tag ${t.price==='Gratuit'?'g':'p'}">${t.price==='Gratuit'?'🆓 Gratuit':'💰 Payant'}</span>
+      ${t.pmr?'<span class="tag b">♿ PMR</span>':''}
+      ${t.baby?'<span class="tag">👶 Langer</span>':''}
+      ${t.clean?'<span class="tag">✨ Propre</span>':''}
+      ${t.status?`<span class="tag" style="${t.status==='Ouvert'?'background:#e8f4ed;color:#1a5c38':'background:#fde8e8;color:#b03030'}">${t.status==='Ouvert'?'🟢':'🔴'} ${t.status}</span>`:''}
+    </div>
+    <div class="tcard-actions">
+      <button class="tca" onclick="event.stopPropagation();openDetail('${t.id}')">💬 Avis</button>
+      <button class="tca" onclick="event.stopPropagation();navTo('${t.id}')">🗺 Y aller</button>
+      <button class="tca ${lk?'liked':''}" id="lc-${t.id}" onclick="event.stopPropagation();likeCard('${t.id}')">${lk?'❤️':'🤍'} ${lk?'Aimé':'J\'aime'}</button>
+    </div>`;
+  el.querySelector('.tcard-top').onclick=()=>openDetail(t.id);
+  return el;
+}
+
+/* detail */
+window.openDetail = (id)=>{
+  currentId=id; const t=toilets.find(x=>x.id===id); if(!t) return;
+  document.getElementById('d-thumb').textContent=t.emoji||'🚽';
+  document.getElementById('d-name').textContent=t.name;
+  document.getElementById('d-addr').textContent='📍 '+(t.addr||t.address||'—');
+  const r=t.r||0;
+  document.getElementById('d-rating').textContent=r.toFixed(1);
+  document.getElementById('d-stars').innerHTML=stars(r);
+  document.getElementById('d-cnt').textContent=(t.rc||0)+' avis';
+  document.getElementById('d-bars').innerHTML=[5,4,3,2,1].map(n=>`<div class="rbar-row"><span class="rbar-n">${n}</span><div class="rbar-bg"><div class="rbar-fill" style="width:${barPct(n,r)}%"></div></div></div>`).join('');
+  document.getElementById('d-tags').innerHTML=`<span class="tag ${t.price==='Gratuit'?'g':'p'}">${t.price==='Gratuit'?'🆓 Gratuit':'💰 Payant'}</span>${t.pmr?'<span class="tag b">♿ PMR</span>':''}${t.baby?'<span class="tag">👶 Langer</span>':''}${t.clean?'<span class="tag">✨ Propre</span>':''}`;
+  document.getElementById('d-grid').innerHTML=`<div class="iblock"><div class="il">Tarif</div><div class="iv">${t.price}</div></div><div class="iblock"><div class="il">Statut</div><div class="iv">${t.status||'?'}</div></div><div class="iblock"><div class="il">PMR</div><div class="iv">${t.pmr?'✅ Oui':'❌ Non'}</div></div><div class="iblock"><div class="il">Table langer</div><div class="iv">${t.baby?'✅ Oui':'❌ Non'}</div></div>`;
+  setLikeBtn(); revStars=0; setStar('rev-stars',0); document.getElementById('rev-text').value='';
+  renderRevs(id);
+  ['page-feed','page-map','page-top','page-profile'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+  document.getElementById('page-detail').classList.remove('hidden');
+  window.scrollTo(0,0);
+};
+window.closeDetail = ()=>{ document.getElementById('page-detail').classList.add('hidden'); const a=document.querySelector('.bnav.active'); showTab(a?.id?.replace('tab-','')||'feed'); };
+
+function renderRevs(id){
+  const list=REVS[id]||[];
+  const wrap=document.getElementById('rev-list');
+  if(!list.length){ wrap.innerHTML='<div class="empty" style="padding:16px"><p>Aucun avis pour l\'instant.</p></div>'; return; }
+  wrap.innerHTML=list.map(rv=>`<div class="rev-card"><div class="rev-top"><div class="rev-av">${rv.who[0]}</div><div><div class="rev-name">${rv.who}</div><div class="rev-stars">${stars(rv.r)}</div></div><div class="rev-date">${rv.when}</div></div><div class="rev-text">${rv.txt}</div></div>`).join('');
+}
+
+/* review */
+window.pickStar = (n)=>{ revStars=n; setStar('rev-stars',n); };
+window.submitRev = ()=>{
+  if(!revStars) return toast('Choisissez une note ⭐');
+  const txt=document.getElementById('rev-text').value.trim(); if(!txt) return toast('Écrivez un commentaire');
+  if(!REVS[currentId]) REVS[currentId]=[];
+  REVS[currentId].unshift({ who:me?.displayName||me?.email?.split('@')[0]||'Anonyme', when:'À l\'instant', r:revStars, txt });
+  document.getElementById('rev-text').value=''; revStars=0; setStar('rev-stars',0);
+  renderRevs(currentId);
+  myRevCount++; document.getElementById('ps-rev').textContent=myRevCount;
+  toast('Avis publié ! Merci 🙏');
+};
+
+/* add toilet */
+window.pickAddStar = (n)=>{ addStars=n; setStar('add-stars',n); };
+window.submitAdd = async()=>{
+  const name=document.getElementById('an').value.trim(); if(!name) return toast('Nom du lieu requis');
+  const t={ id:'u_'+Date.now(), name, addr:document.getElementById('aa').value, price:document.getElementById('ap').value, status:document.getElementById('as').value, pmr:isOn('at-pmr'), baby:isOn('at-baby'), clean:isOn('at-clean'), r:addStars||null, rc:addStars?1:0, ts:Date.now()/1000, emoji:emoji(name), uid:me?.uid||'anon' };
+  try{ await addDoc(collection(db,'toilets'),t); }catch{}
+  toilets.unshift(t); updateStats(); renderFeed(); renderFeatured();
+  ['an','aa','ac'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['at-pmr','at-baby','at-clean'].forEach(id=>setOn(id,false));
+  addStars=0; setStar('add-stars',0); closeSheet('add');
+  myAddCount++; document.getElementById('ps-add').textContent=myAddCount;
+  toast('Lieu signalé ! Merci 🚽');
+};
+
+/* likes */
+window.toggleLike = ()=>{ if(liked.has(currentId)){ liked.delete(currentId); toast('Retiré des favoris'); }else{ liked.add(currentId); toast('Ajouté aux favoris ❤️'); } setLikeBtn(); document.getElementById('ps-fav').textContent=liked.size; };
+window.likeCard = (id)=>{ const btn=document.getElementById('lc-'+id); if(liked.has(id)){ liked.delete(id); if(btn){btn.innerHTML='🤍 J\'aime'; btn.classList.remove('liked');} toast('Retiré des favoris'); }else{ liked.add(id); if(btn){btn.innerHTML='❤️ Aimé'; btn.classList.add('liked');} toast('Ajouté aux favoris ❤️'); } document.getElementById('ps-fav').textContent=liked.size; };
+function setLikeBtn(){ document.getElementById('d-like').innerHTML=liked.has(currentId)?'❤️ Favori':'🤍 Favori'; }
+
+/* map */
+function renderMap(){
+  const wrap=document.getElementById('map-pins'); wrap.innerHTML='';
+  toilets.slice(0,16).forEach(t=>{ const p=document.createElement('div'); p.className='mpin'; p.style.left=(5+Math.random()*85)+'%'; p.style.top=(8+Math.random()*75)+'%'; p.style.animationDelay=(Math.random()*2)+'s'; p.innerHTML=`<span class="mpin-label">${t.name.split(' ').slice(0,2).join(' ')}</span>${t.emoji||'🚽'}`; p.onclick=()=>openDetail(t.id); wrap.appendChild(p); });
+}
+window.filterPins = (q)=>{
+  if(!q){ renderMap(); return; }
+  const wrap=document.getElementById('map-pins'); wrap.innerHTML='';
+  toilets.filter(t=>t.name.toLowerCase().includes(q.toLowerCase())||(t.addr||'').toLowerCase().includes(q.toLowerCase())).slice(0,16).forEach(t=>{ const p=document.createElement('div'); p.className='mpin'; p.style.left=(5+Math.random()*85)+'%'; p.style.top=(8+Math.random()*75)+'%'; p.innerHTML=`<span class="mpin-label">${t.name.split(' ').slice(0,2).join(' ')}</span>${t.emoji||'🚽'}`; p.onclick=()=>openDetail(t.id); wrap.appendChild(p); });
+};
+
+/* top */
+function renderTop(){
+  const list=[...toilets].sort((a,b)=>(b.r||0)-(a.r||0));
+  const wrap=document.getElementById('top-list'); wrap.innerHTML='';
+  list.forEach((t,i)=>{ const c=makeCard(t); c.querySelector('.tcard-name').innerHTML=`<span class="rank-badge">#${i+1}</span>${t.name}`; wrap.appendChild(c); });
+}
+
+/* profile */
+function renderProfile(){
+  if(!me) return;
+  const init=(me.displayName||me.email||'?')[0].toUpperCase();
+  ['prof-av','avatar-btn'].forEach(id=>document.getElementById(id).textContent=init);
+  document.getElementById('prof-name').textContent=me.displayName||me.email?.split('@')[0]||'Utilisateur';
+  document.getElementById('prof-mail').textContent=me.email||'';
+  document.getElementById('ps-fav').textContent=liked.size;
+  setOn('p-free',prefs.onlyFree); setOn('p-pmr',prefs.onlyPMR); setOn('p-notif',prefs.notif);
+}
+window.savePref = async()=>{
+  prefs.onlyFree=isOn('p-free'); prefs.onlyPMR=isOn('p-pmr'); prefs.notif=isOn('p-notif');
+  if(me) await setDoc(doc(db,'users',me.uid),prefs);
+  toast('Préférences sauvegardées ✓');
+};
+
+/* misc */
+window.goDir = ()=>{ const t=toilets.find(x=>x.id===currentId); if(t?.addr) window.open(`https://maps.google.com/?q=${encodeURIComponent(t.addr)}`,'_blank'); else toast('Adresse non disponible'); };
+window.navTo = (id)=>{ const t=toilets.find(x=>x.id===id); if(t?.addr) window.open(`https://maps.google.com/?q=${encodeURIComponent(t.addr)}`,'_blank'); else toast('Adresse non disponible'); };
+window.shareToilet = ()=>{ const t=toilets.find(x=>x.id===currentId); if(navigator.share) navigator.share({title:'FlushR — '+(t?.name||''), text:'J\'ai trouvé des toilettes sur FlushR !', url:window.location.href}); else{ navigator.clipboard?.writeText(window.location.href); toast('Lien copié !'); } };
+window.handleNotif = ()=>{ document.getElementById('notif-btn').textContent='🔔'; toast('Aucune nouvelle notification'); };
+window.submitFb = ()=>{ const txt=document.getElementById('fb-text').value.trim(); if(!txt) return toast('Écrivez un message'); document.getElementById('fb-text').value=''; closeSheet('feedback'); toast('Merci pour votre retour ! 💚'); };
+
+/* greet */
+function greet(){ const h=new Date().getHours(); document.getElementById('hero-greeting').textContent=(h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+' ! 👋'; }
+
+/* auth state */
+onAuthStateChanged(auth, async(user)=>{
+  me=user;
+  if(user){
+    document.getElementById('page-auth').classList.add('hidden');
+    greet();
+    try{
+      const ud=await getDoc(doc(db,'users',user.uid));
+      if(ud.exists()&&ud.data().done){ prefs={...prefs,...ud.data()}; enter(); }
+      else{ document.getElementById('page-setup').classList.remove('hidden'); }
+    }catch{ enter(); }
+    loadData();
+  }else{
+    ['page-feed','page-map','page-top','page-profile','page-detail','page-setup'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+    document.getElementById('page-auth').classList.remove('hidden');
+    document.getElementById('topnav').classList.add('hidden');
+    document.getElementById('botnav').classList.add('hidden');
+  }
+});
+</script>
 </body>
 </html>
